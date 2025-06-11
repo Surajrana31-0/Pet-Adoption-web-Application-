@@ -352,6 +352,7 @@ body {
 
 .login-button:hover {
   color: var(--orange-500);
+  cursor: pointer;
 }
 
 .signup-button {

@@ -103,11 +103,11 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="contact-item">
                 <MapPin className="h-5 w-5 contact-icon" />
-                <span className="footer-text">123 Pet Street, Animal City, AC 12345</span>
+                <span className="footer-text">123 New Baneshower, Animal City, AC 12345</span>
               </div>
               <div className="contact-item">
                 <Phone className="h-5 w-5 contact-icon" />
-                <span className="footer-text">+1 (555) 123-4567</span>
+                <span className="footer-text">+1 (977) 123-4567</span>
               </div>
               <div className="contact-item">
                 <Mail className="h-5 w-5 contact-icon" />
@@ -126,7 +126,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="footer-bottom">
           <p className="copyright">
-            © 2024 PawHaven. All rights reserved. Made with ❤️ for pets and their families.
+            © 2024 PawHaven. All rights reserved. Made with ♥ for pets and their families.
           </p>
           <div className="footer-legal">
             <Link to="/privacy" className="legal-link">

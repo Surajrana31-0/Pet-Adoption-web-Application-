@@ -22,7 +22,7 @@ const Header = () => {
               <PawPrint className="h-6 w-6" />
             </div>
             <span className="logo-text">
-              PawHaven
+              Pet-Ey
             </span>
           </Link>
 

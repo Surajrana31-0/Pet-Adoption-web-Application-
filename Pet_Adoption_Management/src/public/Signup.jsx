@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, Phone, Heart, PawPrint, MapPin } from 'lucide-react';
+import {useForm} from 'react-hook-form';
 import '../styles/Signup.css';
 
 const Signup = () => {
@@ -128,7 +129,7 @@ const Signup = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="form-input"
-                  placeholder="(555) 123-4567"
+                  placeholder="Enter your phone number"
                 />
               </div>
             </div>

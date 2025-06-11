@@ -35,10 +35,10 @@ const Home = () => {
   ];
 
   const stats = [
-    { number: '5,000+', label: 'Happy Adoptions', icon: Heart },
-    { number: '1,200+', label: 'Active Volunteers', icon: Users },
+    { number: '5,00+', label: 'Happy Adoptions', icon: Heart },
+    { number: '1,20+', label: 'Active Volunteers', icon: Users },
     { number: '50+', label: 'Partner Shelters', icon: HomeIcon },
-    { number: '15+', label: 'Years Experience', icon: Award },
+    { number: '5+', label: 'Years Experience', icon: Award },
   ];
 
   const steps = [
