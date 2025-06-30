@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, Phone, Heart, PawPrint, MapPin } from 'lucide-react';
 import {useForm} from 'react-hook-form';
 import '../styles/Signup.css';
@@ -18,6 +18,9 @@ const Signup = () => {
     agreeToTerms: false,
     subscribeNewsletter: true,
   });
+  const [message, setMessage] = useState(null);
+  const [messageType, setMessageType] = useState(''); // 'success' or 'error'
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -27,15 +30,48 @@ const Signup = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log('Signup form submitted:', formData);
+    if (formData.password !== formData.confirmPassword) {
+      setMessage('Passwords do not match');
+      setMessageType('error');
+      return;
+    }
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.firstName + ' ' + formData.lastName,
+          email: formData.email,
+          password: formData.password
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('token', data.data.access_token);
+        setMessage('Signup successful! Redirecting to login...');
+        setMessageType('success');
+        setTimeout(() => {
+          navigate('/login');
+        }, 1500);
+      } else {
+        setMessage(data.message || 'Signup failed');
+        setMessageType('error');
+      }
+    } catch (err) {
+      setMessage('Network error');
+      setMessageType('error');
+    }
   };
 
   return (
     <div className="signup-page">
       <div className="signup-container">
+        {/* Message Popup */}
+        {message && (
+          <div className={`popup-message ${messageType}`}>{message}</div>
+        )}
         {/* Header */}
         <div className="signup-header">
           <div className="logo-wrapper">

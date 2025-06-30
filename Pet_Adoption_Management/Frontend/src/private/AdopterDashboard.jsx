@@ -1,139 +1,143 @@
-// import React from 'react';
-// import { usePets } from '../../context/PetContext';
-// import { useAuth } from '../../context/AuthContext';
-// import Header from '../common/Header';
-// import PetCard from '../pets/PetCard';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
+import { PawPrint, Heart, LogOut } from 'lucide-react';
+import '../styles/AdopterDashboard.css';
 
-// const AdopterDashboard = () => {
-//   const { getAvailablePets, getUserAdoptionRequests } = usePets();
-//   const { user } = useAuth();
-  
-//   const availablePets = getAvailablePets();
-//   const myRequests = getUserAdoptionRequests(user.id);
-//   const featuredPets = availablePets.slice(0, 3);
+// Placeholder data for favorites (will be replaced later)
+const placeholderFavorites = [
+  { id: 1, name: 'Charlie', age: '3 years', species: 'Dog', image: 'https://images.pexels.com/photos/895259/pexels-photo-895259.jpeg?auto=compress&cs=tinysrgb&w=400' },
+  { id: 2, name: 'Whiskers', age: '2 years', species: 'Cat', image: 'https://images.pexels.com/photos/208984/pexels-photo-208984.jpeg?auto=compress&cs=tinysrgb&w=400' },
+];
 
-//   const pendingRequests = myRequests.filter(req => req.status === 'pending').length;
-//   const approvedRequests = myRequests.filter(req => req.status === 'approved').length;
-//   const rejectedRequests = myRequests.filter(req => req.status === 'rejected').length;
+const AdopterDashboard = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [requests, setRequests] = useState([]);
+  const [favorites, setFavorites] = useState(placeholderFavorites);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-//   return (
-//     <>
-//       <Header title="Adopter Dashboard" />
-//       <div className="content">
-//         <div className="stats-grid">
-//           <div className="stat-card primary">
-//             <div className="stat-number">{availablePets.length}</div>
-//             <div className="stat-label">Available Pets</div>
-//           </div>
-          
-//           <div className="stat-card warning">
-//             <div className="stat-number">{pendingRequests}</div>
-//             <div className="stat-label">Pending Applications</div>
-//           </div>
-          
-//           <div className="stat-card success">
-//             <div className="stat-number">{approvedRequests}</div>
-//             <div className="stat-label">Approved Applications</div>
-//           </div>
-          
-//           <div className="stat-card error">
-//             <div className="stat-number">{rejectedRequests}</div>
-//             <div className="stat-label">Rejected Applications</div>
-//           </div>
-//         </div>
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
 
-//         <div className="card">
-//           <div className="card-header">
-//             <h3 className="card-title">Featured Pets</h3>
-//           </div>
-//           <div className="card-content">
-//             {featuredPets.length > 0 ? (
-//               <div className="pets-grid">
-//                 {featuredPets.map((pet) => (
-//                   <PetCard
-//                     key={pet.id}
-//                     pet={pet}
-//                     isAdmin={false}
-//                   />
-//                 ))}
-//               </div>
-//             ) : (
-//               <div className="empty-state">
-//                 <h3>No Pets Available</h3>
-//                 <p>There are currently no pets available for adoption</p>
-//               </div>
-//             )}
-//           </div>
-//         </div>
+    try {
+      const decoded = jwtDecode(token);
+      if (decoded.exp * 1000 < Date.now()) {
+        localStorage.removeItem('token');
+        navigate('/login');
+        return;
+      }
+      setUser(decoded);
 
-//         {myRequests.length > 0 && (
-//           <div className="card">
-//             <div className="card-header">
-//               <h3 className="card-title">Recent Applications</h3>
-//             </div>
-//             <div className="card-content">
-//               <div className="table-container">
-//                 <table className="table">
-//                   <thead>
-//                     <tr>
-//                       <th>Pet</th>
-//                       <th>Date Applied</th>
-//                       <th>Status</th>
-//                     </tr>
-//                   </thead>
-//                   <tbody>
-//                     {myRequests.slice(-5).reverse().map((request) => {
-//                       const pet = availablePets.find(p => p.id === request.petId) || 
-//                                  JSON.parse(localStorage.getItem('pets') || '[]').find(p => p.id === request.petId);
-                      
-//                       return (
-//                         <tr key={request.id}>
-//                           <td>
-//                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-//                               {pet?.image && (
-//                                 <img
-//                                   src={pet.image}
-//                                   alt={pet?.name}
-//                                   style={{
-//                                     width: '40px',
-//                                     height: '40px',
-//                                     borderRadius: '8px',
-//                                     objectFit: 'cover'
-//                                   }}
-//                                 />
-//                               )}
-//                               <div>
-//                                 <div style={{ fontWeight: '500' }}>
-//                                   {pet?.name || 'Unknown'}
-//                                 </div>
-//                                 <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>
-//                                   {pet?.breed}
-//                                 </div>
-//                               </div>
-//                             </div>
-//                           </td>
-//                           <td>{new Date(request.dateSubmitted).toLocaleDateString()}</td>
-//                           <td>
-//                             <span className={`status-badge ${
-//                               request.status === 'pending' ? 'status-pending' :
-//                               request.status === 'approved' ? 'status-adopted' :
-//                               'status-badge'
-//                             }`}>
-//                               {request.status}
-//                             </span>
-//                           </td>
-//                         </tr>
-//                       );
-//                     })}
-//                   </tbody>
-//                 </table>
-//               </div>
-//             </div>
-//           </div>
-//         )}
-//       </div>
-//     </>
-//   );
-// };
+      const fetchDashboardData = async () => {
+        try {
+          const response = await fetch('http://localhost:5000/api/adoptions', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (!response.ok) {
+            throw new Error('Failed to fetch adoption requests');
+          }
+          const data = await response.json();
+          setRequests(data.data);
+        } catch (fetchError) {
+          setError('Could not load your data. Please try again later.');
+        } finally {
+          setIsLoading(false);
+        }
+      };
 
-// export default AdopterDashboard;
+      fetchDashboardData();
+    } catch (e) {
+      localStorage.removeItem('token');
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
+  if (error) return <div className="dashboard-error">{error}</div>;
+  if (isLoading || !user) return <div>Loading...</div>;
+
+  return (
+    <div className="dashboard-page">
+      <div className="dashboard-header">
+        <h1>
+          <PawPrint className="welcome-icon" size={36} />
+          Welcome, {user.email.split('@')[0]}!
+        </h1>
+        <button onClick={handleLogout} className="logout-button">
+          <LogOut className="logout-icon" size={20} />
+          Logout
+        </button>
+      </div>
+
+      <section className="dashboard-section">
+        <h2>My Adoption Requests</h2>
+        <div className="requests-table-container">
+          <table className="requests-table">
+            <thead>
+              <tr>
+                <th>Pet</th>
+                <th>Date Submitted</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr><td colSpan="3">Loading requests...</td></tr>
+              ) : requests.length > 0 ? (
+                requests.map(req => (
+                  <tr key={req.id}>
+                    <td>
+                      <div className="pet-info">
+                        <img src={req.Pet?.image} alt={req.Pet?.name} />
+                        <span>{req.Pet?.name || 'Pet not found'}</span>
+                      </div>
+                    </td>
+                    <td>{new Date(req.createdAt).toLocaleDateString()}</td>
+                    <td>
+                      <span className={`status-badge status-${req.status}`}>
+                        {req.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr><td colSpan="3" style={{ textAlign: 'center' }}>No adoption requests yet.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="dashboard-section">
+        <h2>Favorite Pets</h2>
+        <div className="favorites-grid">
+          {favorites.map(pet => (
+            <div key={pet.id} className="pet-card">
+              <img src={pet.image} alt={pet.name} className="pet-card-image" />
+              <div className="pet-card-content">
+                <div className="pet-card-header">
+                  <h3>{pet.name}</h3>
+                  <Heart className="favorite-icon" size={24} />
+                </div>
+                <p>{pet.age} • {pet.species}</p>
+                <button className="pet-card-button">View Details</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default AdopterDashboard;
