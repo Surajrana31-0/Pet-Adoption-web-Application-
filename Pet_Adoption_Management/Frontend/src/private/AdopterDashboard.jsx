@@ -36,14 +36,22 @@ const AdopterDashboard = () => {
 
       const fetchDashboardData = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/adoptions', {
+          // Fetch adoption requests
+          const requestsRes = await fetch('http://localhost:5000/api/adoptions', {
             headers: { 'Authorization': `Bearer ${token}` }
           });
-          if (!response.ok) {
-            throw new Error('Failed to fetch adoption requests');
-          }
-          const data = await response.json();
-          setRequests(data.data);
+          if (!requestsRes.ok) throw new Error('Failed to fetch adoption requests');
+          const requestsData = await requestsRes.json();
+          setRequests(requestsData.data);
+
+          // Fetch favorite pets
+          const favoritesRes = await fetch('http://localhost:5000/api/favorites', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (!favoritesRes.ok) throw new Error('Failed to fetch favorite pets');
+          const favoritesData = await favoritesRes.json();
+          setFavorites(favoritesData.data);
+
         } catch (fetchError) {
           setError('Could not load your data. Please try again later.');
         } finally {
