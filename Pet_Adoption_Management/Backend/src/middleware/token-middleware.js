@@ -18,7 +18,7 @@ export function authenticateToken(req, res, next) {
       .send({ message: "Access denied. No token provided." });
   }
 
-  jwt.verify(token, process.env.secretkey, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(403).send("Invalid or expired token.");
     }
