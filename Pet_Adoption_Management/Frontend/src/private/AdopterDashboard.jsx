@@ -1,151 +1,167 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import jwtDecode from 'jwt-decode';
-import { PawPrint, Heart, LogOut } from 'lucide-react';
-import '../styles/AdopterDashboard.css';
-
-// Placeholder data for favorites (will be replaced later)
-const placeholderFavorites = [
-  { id: 1, name: 'Charlie', age: '3 years', species: 'Dog', image: 'https://images.pexels.com/photos/895259/pexels-photo-895259.jpeg?auto=compress&cs=tinysrgb&w=400' },
-  { id: 2, name: 'Whiskers', age: '2 years', species: 'Cat', image: 'https://images.pexels.com/photos/208984/pexels-photo-208984.jpeg?auto=compress&cs=tinysrgb&w=400' },
-];
+import React, { useState, useEffect } from 'react'
+import { Heart, Clock, CheckCircle, User, Mail, Phone } from 'lucide-react'
+import { useAuth } from '../../contexts/AuthContext'
+import { adoptionAPI } from '../../utils/api'
+import './Dashboard.css'
+import { useNavigate } from 'react-router-dom'
+import '../styles/AdopterDashboard.css'
 
 const AdopterDashboard = () => {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [requests, setRequests] = useState([]);
-  const [favorites, setFavorites] = useState(placeholderFavorites);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { user } = useAuth()
+  const [applications, setApplications] = useState([])
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token')
     if (!token) {
-      navigate('/login');
-      return;
+      navigate('/')
+      return
     }
+    fetchApplications()
+  }, [navigate])
 
+  const fetchApplications = async () => {
     try {
-      const decoded = jwtDecode(token);
-      if (decoded.exp * 1000 < Date.now()) {
-        localStorage.removeItem('token');
-        navigate('/login');
-        return;
-      }
-      setUser(decoded);
-
-      const fetchDashboardData = async () => {
-        try {
-          // Fetch adoption requests
-          const requestsRes = await fetch('http://localhost:5000/api/adoptions', {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (!requestsRes.ok) throw new Error('Failed to fetch adoption requests');
-          const requestsData = await requestsRes.json();
-          setRequests(requestsData.data);
-
-          // Fetch favorite pets
-          const favoritesRes = await fetch('http://localhost:5000/api/favorites', {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (!favoritesRes.ok) throw new Error('Failed to fetch favorite pets');
-          const favoritesData = await favoritesRes.json();
-          setFavorites(favoritesData.data);
-
-        } catch (fetchError) {
-          setError('Could not load your data. Please try again later.');
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      fetchDashboardData();
-    } catch (e) {
-      localStorage.removeItem('token');
-      navigate('/login');
+      const data = await adoptionAPI.getUserApplications()
+      setApplications(data)
+    } catch (error) {
+      console.error('Error fetching applications:', error)
+    } finally {
+      setLoading(false)
     }
-  }, [navigate]);
+  }
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'pending':
+        return <Clock className="status-icon pending" />
+      case 'approved':
+        return <CheckCircle className="status-icon approved" />
+      case 'rejected':
+        return <Heart className="status-icon rejected" />
+      default:
+        return <Clock className="status-icon pending" />
+    }
+  }
 
-  if (error) return <div className="dashboard-error">{error}</div>;
-  if (isLoading || !user) return <div>Loading...</div>;
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'pending':
+        return 'Under Review'
+      case 'approved':
+        return 'Approved'
+      case 'rejected':
+        return 'Not Selected'
+      default:
+        return 'Under Review'
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="loading">
+        <div className="loading-spinner"></div>
+      </div>
+    )
+  }
 
   return (
-    <div className="dashboard-page">
-      <div className="dashboard-header">
-        <h1>
-          <PawPrint className="welcome-icon" size={36} />
-          Welcome, {user.email.split('@')[0]}!
-        </h1>
-        <button onClick={handleLogout} className="logout-button">
-          <LogOut className="logout-icon" size={20} />
-          Logout
-        </button>
-      </div>
-
-      <section className="dashboard-section">
-        <h2>My Adoption Requests</h2>
-        <div className="requests-table-container">
-          <table className="requests-table">
-            <thead>
-              <tr>
-                <th>Pet</th>
-                <th>Date Submitted</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr><td colSpan="3">Loading requests...</td></tr>
-              ) : requests.length > 0 ? (
-                requests.map(req => (
-                  <tr key={req.id}>
-                    <td>
-                      <div className="pet-info">
-                        <img src={req.Pet?.image} alt={req.Pet?.name} />
-                        <span>{req.Pet?.name || 'Pet not found'}</span>
-                      </div>
-                    </td>
-                    <td>{new Date(req.createdAt).toLocaleDateString()}</td>
-                    <td>
-                      <span className={`status-badge status-${req.status}`}>
-                        {req.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan="3" style={{ textAlign: 'center' }}>No adoption requests yet.</td></tr>
-              )}
-            </tbody>
-          </table>
+    <div className="dashboard">
+      <div className="container">
+        <div className="dashboard-header">
+          <h1>My Dashboard</h1>
+          <p>Welcome back, {user.name}!</p>
         </div>
-      </section>
 
-      <section className="dashboard-section">
-        <h2>Favorite Pets</h2>
-        <div className="favorites-grid">
-          {favorites.map(pet => (
-            <div key={pet.id} className="pet-card">
-              <img src={pet.image} alt={pet.name} className="pet-card-image" />
-              <div className="pet-card-content">
-                <div className="pet-card-header">
-                  <h3>{pet.name}</h3>
-                  <Heart className="favorite-icon" size={24} />
+        <div className="dashboard-content">
+          <div className="dashboard-sidebar">
+            <div className="profile-card">
+              <div className="profile-header">
+                <User className="profile-icon" />
+                <h3>Profile Information</h3>
+              </div>
+              <div className="profile-info">
+                <div className="info-item">
+                  <User className="info-icon" />
+                  <span>{user.name}</span>
                 </div>
-                <p>{pet.age} • {pet.species}</p>
-                <button className="pet-card-button">View Details</button>
+                <div className="info-item">
+                  <Mail className="info-icon" />
+                  <span>{user.email}</span>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
-    </div>
-  );
-};
 
-export default AdopterDashboard;
+            <div className="stats-card">
+              <h3>Your Statistics</h3>
+              <div className="stats-grid">
+                <div className="stat-item">
+                  <span className="stat-number">{applications.length}</span>
+                  <span className="stat-label">Applications</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-number">
+                    {applications.filter(app => app.status === 'approved').length}
+                  </span>
+                  <span className="stat-label">Approved</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="dashboard-main">
+            <div className="applications-section">
+              <h2>My Adoption Applications</h2>
+              
+              {applications.length === 0 ? (
+                <div className="empty-state">
+                  <Heart className="empty-icon" />
+                  <h3>No Applications Yet</h3>
+                  <p>You haven't submitted any adoption applications yet.</p>
+                  <a href="/" className="btn btn-primary">Browse Pets</a>
+                </div>
+              ) : (
+                <div className="applications-grid">
+                  {applications.map(application => (
+                    <div key={application.id} className="application-card">
+                      <div className="application-header">
+                        <img 
+                          src={application.pet?.image_url || `https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300`}
+                          alt={application.pet?.name}
+                          className="application-pet-image"
+                        />
+                        <div className="application-info">
+                          <h3>{application.pet?.name}</h3>
+                          <p>{application.pet?.breed}</p>
+                          <div className="application-status">
+                            {getStatusIcon(application.status)}
+                            <span className={`status-text ${application.status}`}>
+                              {getStatusText(application.status)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="application-details">
+                        <p><strong>Submitted:</strong> {new Date(application.created_at).toLocaleDateString()}</p>
+                        {application.status === 'approved' && (
+                          <div className="approval-message">
+                            <CheckCircle className="approval-icon" />
+                            <span>Congratulations! Your application has been approved. We'll contact you soon to arrange the adoption.</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default AdopterDashboard
