@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, Users, Heart, PawPrint } from 'lucide-react'
 import { petAPI, adoptionAPI } from '../../utils/api'
 import PetForm from '../../components/PetForm/PetForm'
-import './Dashboard.css'
+import '../styles/AdminDashboard.css'
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [pets, setPets] = useState([])
@@ -11,10 +12,15 @@ const AdminDashboard = () => {
   const [showAddPet, setShowAddPet] = useState(false)
   const [editingPet, setEditingPet] = useState(null)
   const [showPetForm, setShowPetForm] = useState(false)
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/');
+    }
+    fetchData();
+  }, [navigate])
 
   const fetchData = async () => {
     try {
