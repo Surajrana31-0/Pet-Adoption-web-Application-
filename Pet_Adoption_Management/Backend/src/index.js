@@ -2,28 +2,17 @@ import express from 'express'
 import bodyParser  from 'body-parser';
 import cors from 'cors';
 import { db } from './database/index.js';
-import {userRouter} from './route/index.js'
+import {userRouter, adoptionRouter, favoriteRouter, authRouter, petRouter} from './route/index.js'
 import dotenv from 'dotenv'
-import { authRouter } from './route/auth/authRoute.js';
-import { petRouter } from './route/pet/petRoute.js';
-import { adoptionRouter } from './route/adoption/adoptionRoute.js';
-import { favoriteRouter } from './route/favorite/favoriteRoute.js';
 
 dotenv.config();
 
 
 const app=express();
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  })
-);
+app.use(cors());
+app.use(express.json());
 
 const port = process.env.PORT || 5000;
-app.use(bodyParser.json());
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/pets', petRouter);

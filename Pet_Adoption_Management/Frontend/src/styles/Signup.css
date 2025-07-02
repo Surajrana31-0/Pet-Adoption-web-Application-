@@ -126,12 +126,17 @@
 
 .password-toggle {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  padding-right: 0.75rem;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  z-index: 2;
+  padding: 0;
 }
 
 .toggle-icon {

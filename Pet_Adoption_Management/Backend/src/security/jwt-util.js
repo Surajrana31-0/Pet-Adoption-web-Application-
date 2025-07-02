@@ -6,9 +6,7 @@ dotenv.config();
 //     // The secret key is taken from environment variables
 //     // The token will expire based on the value of process.env.expireIn
 const generateToken = (payload) => {
-    const options = {
-        expiresIn: process.env.JWT_EXPIRES_IN,
-    };
+    const options = { expiresIn: process.env.JWT_EXPIRES_IN || "1d" };
     return jwt.sign(payload, process.env.JWT_SECRET, options);
 };
 export { generateToken };

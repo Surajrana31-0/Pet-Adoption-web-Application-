@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Heart, Clock, CheckCircle, User, Mail, Phone } from 'lucide-react'
-import { useAuth } from '../../contexts/AuthContext'
-import { adoptionAPI } from '../../utils/api'
-import './Dashboard.css'
+import { AuthContext } from '../AuthContext.jsx'
+import { adoptionAPI } from '../utils/api'
 import { useNavigate } from 'react-router-dom'
 import '../styles/AdopterDashboard.css'
 
 const AdopterDashboard = () => {
-  const { user } = useAuth()
+  const { user, token, role, isAuthenticated } = useContext(AuthContext)
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
@@ -67,95 +66,104 @@ const AdopterDashboard = () => {
   }
 
   return (
-    <div className="dashboard">
-      <div className="container">
-        <div className="dashboard-header">
-          <h1>My Dashboard</h1>
-          <p>Welcome back, {user.name}!</p>
-        </div>
-
-        <div className="dashboard-content">
-          <div className="dashboard-sidebar">
-            <div className="profile-card">
-              <div className="profile-header">
-                <User className="profile-icon" />
-                <h3>Profile Information</h3>
-              </div>
-              <div className="profile-info">
-                <div className="info-item">
-                  <User className="info-icon" />
-                  <span>{user.name}</span>
-                </div>
-                <div className="info-item">
-                  <Mail className="info-icon" />
-                  <span>{user.email}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="stats-card">
-              <h3>Your Statistics</h3>
-              <div className="stats-grid">
-                <div className="stat-item">
-                  <span className="stat-number">{applications.length}</span>
-                  <span className="stat-label">Applications</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">
-                    {applications.filter(app => app.status === 'approved').length}
-                  </span>
-                  <span className="stat-label">Approved</span>
-                </div>
-              </div>
-            </div>
+    <div className="adopter-dashboard-container">
+      <h1>Welcome to Your Dashboard!</h1>
+      <p>View your favorite pets and adoption status here.</p>
+      <div className="adopter-actions">
+        <button>My Favorites</button>
+        <button>My Adoptions</button>
+        {/* Add more user actions as needed */}
+      </div>
+      <div className="dashboard">
+        <div className="container">
+          <div className="dashboard-header">
+            <h1>My Dashboard</h1>
+            <p>Welcome back, {user.name}!</p>
           </div>
 
-          <div className="dashboard-main">
-            <div className="applications-section">
-              <h2>My Adoption Applications</h2>
-              
-              {applications.length === 0 ? (
-                <div className="empty-state">
-                  <Heart className="empty-icon" />
-                  <h3>No Applications Yet</h3>
-                  <p>You haven't submitted any adoption applications yet.</p>
-                  <a href="/" className="btn btn-primary">Browse Pets</a>
+          <div className="dashboard-content">
+            <div className="dashboard-sidebar">
+              <div className="profile-card">
+                <div className="profile-header">
+                  <User className="profile-icon" />
+                  <h3>Profile Information</h3>
                 </div>
-              ) : (
-                <div className="applications-grid">
-                  {applications.map(application => (
-                    <div key={application.id} className="application-card">
-                      <div className="application-header">
-                        <img 
-                          src={application.pet?.image_url || `https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300`}
-                          alt={application.pet?.name}
-                          className="application-pet-image"
-                        />
-                        <div className="application-info">
-                          <h3>{application.pet?.name}</h3>
-                          <p>{application.pet?.breed}</p>
-                          <div className="application-status">
-                            {getStatusIcon(application.status)}
-                            <span className={`status-text ${application.status}`}>
-                              {getStatusText(application.status)}
-                            </span>
+                <div className="profile-info">
+                  <div className="info-item">
+                    <User className="info-icon" />
+                    <span>{user.name}</span>
+                  </div>
+                  <div className="info-item">
+                    <Mail className="info-icon" />
+                    <span>{user.email}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stats-card">
+                <h3>Your Statistics</h3>
+                <div className="stats-grid">
+                  <div className="stat-item">
+                    <span className="stat-number">{applications.length}</span>
+                    <span className="stat-label">Applications</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-number">
+                      {applications.filter(app => app.status === 'approved').length}
+                    </span>
+                    <span className="stat-label">Approved</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="dashboard-main">
+              <div className="applications-section">
+                <h2>My Adoption Applications</h2>
+                
+                {applications.length === 0 ? (
+                  <div className="empty-state">
+                    <Heart className="empty-icon" />
+                    <h3>No Applications Yet</h3>
+                    <p>You haven't submitted any adoption applications yet.</p>
+                    <a href="/" className="btn btn-primary">Browse Pets</a>
+                  </div>
+                ) : (
+                  <div className="applications-grid">
+                    {applications.map(application => (
+                      <div key={application.id} className="application-card">
+                        <div className="application-header">
+                          <img 
+                            src={application.pet?.image_url || `https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300`}
+                            alt={application.pet?.name}
+                            className="application-pet-image"
+                          />
+                          <div className="application-info">
+                            <h3>{application.pet?.name}</h3>
+                            <p>{application.pet?.breed}</p>
+                            <div className="application-status">
+                              {getStatusIcon(application.status)}
+                              <span className={`status-text ${application.status}`}>
+                                {getStatusText(application.status)}
+                              </span>
+                            </div>
                           </div>
                         </div>
+                        
+                        <div className="application-details">
+                          <p><strong>Submitted:</strong> {new Date(application.created_at).toLocaleDateString()}</p>
+                          {application.status === 'approved' && (
+                            <div className="approval-message">
+                              <CheckCircle className="approval-icon" />
+                              <span>Congratulations! Your application has been approved. We'll contact you soon to arrange the adoption.</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      
-                      <div className="application-details">
-                        <p><strong>Submitted:</strong> {new Date(application.created_at).toLocaleDateString()}</p>
-                        {application.status === 'approved' && (
-                          <div className="approval-message">
-                            <CheckCircle className="approval-icon" />
-                            <span>Congratulations! Your application has been approved. We'll contact you soon to arrange the adoption.</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
