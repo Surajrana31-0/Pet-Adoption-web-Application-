@@ -1,15 +1,15 @@
 import express from 'express';
 import { petController } from '../../controller/pet/petController.js';
-import { authenticateToken } from '../../middleware/token-middleware.js';
+import { requireAuth, requireAdmin } from '../../middleware/auth-middleware.js';
 
 const router = express.Router();
 
-router.use(authenticateToken);
+router.use(requireAuth);
 
 router.get('/', petController.getAll);
-router.post('/', petController.create);
+router.post('/', requireAdmin, petController.create);
 router.get('/:id', petController.getById);
-router.put('/:id', petController.update);
-router.delete('/:id', petController.deleteById);
+router.put('/:id', requireAdmin, petController.update);
+router.delete('/:id', requireAdmin, petController.deleteById);
 
 export { router as petRouter }; 

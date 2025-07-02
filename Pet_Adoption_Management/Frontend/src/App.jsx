@@ -1,36 +1,42 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './public/Header';
-import Footer from './public/Footer';
-import Home from './public/Home';
-import Login from './public/Login';
-import Signup from './public/Signup';
-import AdopterDashboard from './private/AdopterDashboard';
-import AdminDashboard from './private/AdminDashboard';
-import Contact from './public/Contact';
-import './styles/main.css';
+import React, { useContext } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthContext } from "./AuthContext.jsx";
+import Home from "./public/Home.jsx";
+import About from "./public/About.jsx";
+import Contact from "./public/Contact.jsx";
+import Login from "./public/Login.jsx";
+import Signup from "./public/Signup.jsx";
+import Footer from "./public/Footer.jsx";
+import Header from "./public/Header.jsx";
+import AdminDashboard from "./private/AdminDashboard.jsx";
+import AdopterDashboard from "./private/AdopterDashboard.jsx";
+
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useContext(AuthContext);
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, role } = useContext(AuthContext);
+  return isAuthenticated && role === "admin" ? children : <Navigate to="/login" />;
+};
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<AdopterDashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            {/* Placeholder routes for navigation links */}
-            <Route path="/adopt" element={<div className="p-8 text-center"><h1 className="text-2xl font-bold">Adopt Page - Coming Soon!</h1></div>} />
-            <Route path="/about" element={<div className="p-8 text-center"><h1 className="text-2xl font-bold">About Page - Coming Soon!</h1></div>} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </BrowserRouter>
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/dashboard" element={<ProtectedRoute><AdopterDashboard /></ProtectedRoute>} />
+        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+      <Footer />
+    </>
   );
 }
 

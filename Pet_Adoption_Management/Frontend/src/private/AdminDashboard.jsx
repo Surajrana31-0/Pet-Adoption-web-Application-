@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Plus, Edit, Trash2, Users, Heart, PawPrint } from 'lucide-react'
-import { petAPI, adoptionAPI } from '../../utils/api'
-import PetForm from '../../components/PetForm/PetForm'
+import { petAPI, adoptionAPI } from '../utils/api'
+// import PetForm from '../../components/PetForm/PetForm'
 import '../styles/AdminDashboard.css'
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from "../AuthContext.jsx";
 
 const AdminDashboard = () => {
   const [pets, setPets] = useState([])
@@ -13,6 +14,7 @@ const AdminDashboard = () => {
   const [editingPet, setEditingPet] = useState(null)
   const [showPetForm, setShowPetForm] = useState(false)
   const navigate = useNavigate();
+  const { user, token, role, isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -84,160 +86,162 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="dashboard admin-dashboard">
-      <div className="container">
-        <div className="dashboard-header">
-          <h1>Admin Dashboard</h1>
-          <p>Manage pets and adoption applications</p>
-        </div>
+    <div className="admin-dashboard-container">
+      <h1>Welcome, Admin!</h1>
+      <p>Manage pets, users, and adoptions from this dashboard.</p>
+      <div className="admin-actions">
+        <button>View All Pets</button>
+        <button>View All Users</button>
+        <button>View All Adoptions</button>
+        {/* Add more admin actions as needed */}
+      </div>
 
-        <div className="admin-stats">
-          <div className="stat-card">
-            <PawPrint className="stat-icon" />
-            <div>
-              <span className="stat-number">{pets.length}</span>
-              <span className="stat-label">Total Pets</span>
-            </div>
-          </div>
-          <div className="stat-card">
-            <Heart className="stat-icon" />
-            <div>
-              <span className="stat-number">{applications.length}</span>
-              <span className="stat-label">Applications</span>
-            </div>
-          </div>
-          <div className="stat-card">
-            <Users className="stat-icon" />
-            <div>
-              <span className="stat-number">
-                {applications.filter(app => app.status === 'pending').length}
-              </span>
-              <span className="stat-label">Pending</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="admin-sections">
-          <div className="admin-section">
-            <div className="section-header">
-              <h2>Pets Management</h2>
-              <button 
-                onClick={handleAddPet}
-                className="btn btn-primary"
-              >
-                <Plus />
-                Add Pet
-              </button>
-            </div>
-
-            <div className="pets-grid">
-              {pets.map(pet => (
-                <div key={pet.id} className="admin-pet-card">
-                  <img 
-                    src={pet.image_url || `https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300`}
-                    alt={pet.name}
-                    className="admin-pet-image"
-                  />
-                  <div className="admin-pet-info">
-                    <h3>{pet.name}</h3>
-                    <p>{pet.breed}</p>
-                    <span className={`status-badge ${pet.status}`}>
-                      {pet.status}
-                    </span>
-                    <div className="admin-pet-actions">
-                      <button 
-                        onClick={() => handleEditPet(pet)}
-                        className="btn btn-outline btn-sm"
-                      >
-                        <Edit />
-                      </button>
-                      <button 
-                        onClick={() => handleDeletePet(pet.id)}
-                        className="btn btn-danger btn-sm"
-                      >
-                        <Trash2 />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+      <div className="dashboard admin-dashboard">
+        <div className="container">
+          <div className="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <p>Manage pets and adoption applications</p>
           </div>
 
-          <div className="admin-section">
-            <h2>Adoption Applications</h2>
-            
-            {applications.length === 0 ? (
-              <div className="empty-state">
-                <Heart className="empty-icon" />
-                <h3>No Applications</h3>
-                <p>No adoption applications have been submitted yet.</p>
+          <div className="admin-stats">
+            <div className="stat-card">
+              <PawPrint className="stat-icon" />
+              <div>
+                <span className="stat-number">{pets.length}</span>
+                <span className="stat-label">Total Pets</span>
               </div>
-            ) : (
-              <div className="applications-list">
-                {applications.map(application => (
-                  <div key={application.id} className="admin-application-card">
-                    <div className="application-header">
-                      <img 
-                        src={application.pet?.image_url || `https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=100`}
-                        alt={application.pet?.name}
-                        className="application-pet-thumb"
-                      />
-                      <div className="application-info">
-                        <h4>{application.full_name}</h4>
-                        <p>Wants to adopt <strong>{application.pet?.name}</strong></p>
-                        <small>Submitted: {new Date(application.created_at).toLocaleDateString()}</small>
-                      </div>
-                      <div className="application-status">
-                        <span className={`status-badge ${application.status}`}>
-                          {application.status}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="application-details">
-                      <p><strong>Phone:</strong> {application.phone}</p>
-                      <p><strong>Address:</strong> {application.address}</p>
-                      <p><strong>Housing:</strong> {application.housing_type}</p>
-                      <p><strong>Experience:</strong> {application.experience}</p>
-                      <p><strong>Reason:</strong> {application.reason}</p>
-                    </div>
+            </div>
+            <div className="stat-card">
+              <Heart className="stat-icon" />
+              <div>
+                <span className="stat-number">{applications.length}</span>
+                <span className="stat-label">Applications</span>
+              </div>
+            </div>
+            <div className="stat-card">
+              <Users className="stat-icon" />
+              <div>
+                <span className="stat-number">
+                  {applications.filter(app => app.status === 'pending').length}
+                </span>
+                <span className="stat-label">Pending</span>
+              </div>
+            </div>
+          </div>
 
-                    {application.status === 'pending' && (
-                      <div className="application-actions">
+          <div className="admin-sections">
+            <div className="admin-section">
+              <div className="section-header">
+                <h2>Pets Management</h2>
+                <button 
+                  onClick={handleAddPet}
+                  className="btn btn-primary"
+                >
+                  <Plus />
+                  Add Pet
+                </button>
+              </div>
+
+              <div className="pets-grid">
+                {pets.map(pet => (
+                  <div key={pet.id} className="admin-pet-card">
+                    <img 
+                      src={pet.image_url || `https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300`}
+                      alt={pet.name}
+                      className="admin-pet-image"
+                    />
+                    <div className="admin-pet-info">
+                      <h3>{pet.name}</h3>
+                      <p>{pet.breed}</p>
+                      <span className={`status-badge ${pet.status}`}>
+                        {pet.status}
+                      </span>
+                      <div className="admin-pet-actions">
                         <button 
-                          onClick={() => handleApplicationStatus(application.id, 'approved')}
-                          className="btn btn-secondary btn-sm"
+                          onClick={() => handleEditPet(pet)}
+                          className="btn btn-outline btn-sm"
                         >
-                          Approve
+                          <Edit />
                         </button>
                         <button 
-                          onClick={() => handleApplicationStatus(application.id, 'rejected')}
+                          onClick={() => handleDeletePet(pet.id)}
                           className="btn btn-danger btn-sm"
                         >
-                          Reject
+                          <Trash2 />
                         </button>
                       </div>
-                    )}
+                    </div>
                   </div>
                 ))}
               </div>
-            )}
+            </div>
+
+            <div className="admin-section">
+              <h2>Adoption Applications</h2>
+              
+              {applications.length === 0 ? (
+                <div className="empty-state">
+                  <Heart className="empty-icon" />
+                  <h3>No Applications</h3>
+                  <p>No adoption applications have been submitted yet.</p>
+                </div>
+              ) : (
+                <div className="applications-list">
+                  {applications.map(application => (
+                    <div key={application.id} className="admin-application-card">
+                      <div className="application-header">
+                        <img 
+                          src={application.pet?.image_url || `https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=100`}
+                          alt={application.pet?.name}
+                          className="application-pet-thumb"
+                        />
+                        <div className="application-info">
+                          <h4>{application.full_name}</h4>
+                          <p>Wants to adopt <strong>{application.pet?.name}</strong></p>
+                          <small>Submitted: {new Date(application.created_at).toLocaleDateString()}</small>
+                        </div>
+                        <div className="application-status">
+                          <span className={`status-badge ${application.status}`}>
+                            {application.status}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="application-details">
+                        <p><strong>Phone:</strong> {application.phone}</p>
+                        <p><strong>Address:</strong> {application.address}</p>
+                        <p><strong>Housing:</strong> {application.housing_type}</p>
+                        <p><strong>Experience:</strong> {application.experience}</p>
+                        <p><strong>Reason:</strong> {application.reason}</p>
+                      </div>
+
+                      {application.status === 'pending' && (
+                        <div className="application-actions">
+                          <button 
+                            onClick={() => handleApplicationStatus(application.id, 'approved')}
+                            className="btn btn-secondary btn-sm"
+                          >
+                            Approve
+                          </button>
+                          <button 
+                            onClick={() => handleApplicationStatus(application.id, 'rejected')}
+                            className="btn btn-danger btn-sm"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Pet Form Modal */}
-      {showPetForm && (
-        <PetForm
-          pet={editingPet}
-          onClose={() => {
-            setShowPetForm(false)
-            setEditingPet(null)
-          }}
-          onSuccess={handlePetFormSuccess}
-        />
-      )}
+      {/* PetForm removed: component does not exist */}
     </div>
   )
 }

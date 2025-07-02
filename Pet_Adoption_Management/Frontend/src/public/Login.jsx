@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Heart, PawPrint } from 'lucide-react';
+import { AuthContext } from "../AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
+import "../styles/main.css";
 
 const Login = () => {
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     rememberMe: false,
   });
+  const [error, setError] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -18,10 +24,31 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login form submitted:', formData);
+    setError("");
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email, password: formData.password }),
+      });
+      const data = await res.json();
+      if (res.ok && data.data?.access_token) {
+        login(data.data.access_token);
+        const token = data.data.access_token;
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        if (payload.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      setError("Login failed");
+    }
   };
 
   return (
@@ -124,8 +151,6 @@ const Login = () => {
               <span>Sign In</span>
             </button>
 
-
-
             {/* Divider */}
             <div className="divider">
               <span className="divider-text">Or continue with</span>
@@ -162,7 +187,7 @@ const Login = () => {
               </button>
             </div>
 
-         
+            {error && <div className="error">{error}</div>}
           </form>
 
           {/* Sign Up Link */}

@@ -13,8 +13,8 @@ const signup = async (req, res) => {
             return res.status(409).json({ message: "User already exists" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await User.create({ name, email, password: hashedPassword });
-        const token = generateToken({ id: newUser.id, email: newUser.email });
+        const newUser = await User.create({ name, email, password: hashedPassword, role: "user" });
+        const token = generateToken({ id: newUser.id, email: newUser.email, role: newUser.role });
         return res.status(201).json({
             data: { access_token: token },
             message: "Signup successful",
@@ -41,7 +41,7 @@ const login = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ message: "Invalid password" });
         }
-        const token = generateToken({ id: foundUser.id, email: foundUser.email });
+        const token = generateToken({ id: foundUser.id, email: foundUser.email, role: foundUser.role });
         return res.status(200).send({
             data: { access_token: token },
             message: "Login successful",

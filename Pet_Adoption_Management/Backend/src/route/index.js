@@ -1,5 +1,5 @@
-export * from './user/userRoute.js'
-export * from './auth/authRoute.js'
-export * from './pet/petRoute.js'
-export * from './adoption/adoptionRoute.js'
-export * from './favorite/favoriteRoute.js'
+export { petRouter } from './pet/petRoute.js';
+export { adoptionRouter } from './adoption/adoptionRoute.js';
+export { userRouter } from './user/userRoute.js';
+export { favoriteRouter } from './favorite/favoriteRoute.js';
+export { authRouter } from './auth/authRoute.js';
