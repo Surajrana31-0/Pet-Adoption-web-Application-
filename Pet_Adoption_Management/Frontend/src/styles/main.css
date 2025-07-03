@@ -1191,36 +1191,6 @@ body {
   font-size: 0.875rem;
 }
 
-.social-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-}
-
-.social-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--gray-300);
-  border-radius: 0.75rem;
-  background-color: var(--white);
-  color: var(--gray-500);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.3s;
-}
-
-.social-button:hover {
-  background-color: var(--gray-50);
-}
-
-.social-icon {
-  height: 1.25rem;
-  width: 1.25rem;
-  margin-right: 0.5rem;
-}
-
 .signup-prompt {
   margin-top: 2rem;
   text-align: center;
