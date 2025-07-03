@@ -1,5 +1,5 @@
 import React from "react";
-import "./Modal.css";
+import "./DialogueBox.css";
 
 const Modal = ({ open, onClose, title, message, type = "info" }) => {
   if (!open) return null;

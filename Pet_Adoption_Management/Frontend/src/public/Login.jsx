@@ -1,9 +1,13 @@
 import React, { useState, useContext } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Heart, PawPrint } from 'lucide-react';
 import { AuthContext } from "../AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
 import "../styles/main.css";
+
+const validateEmail = (email) => {
+  // Simple email regex
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -14,7 +18,16 @@ const Login = () => {
     password: '',
     rememberMe: false,
   });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Auto-hide error after 4 seconds
+  React.useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError("") , 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -24,9 +37,23 @@ const Login = () => {
     }));
   };
 
+  const validateFields = () => {
+    if (!validateEmail(formData.email)) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+    if (!formData.password) {
+      setError("Password cannot be empty.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    if (!validateFields()) return;
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
@@ -36,6 +63,7 @@ const Login = () => {
       const data = await res.json();
       if (res.ok && data.data?.access_token) {
         login(data.data.access_token);
+        localStorage.setItem('token', data.data.access_token);
         const token = data.data.access_token;
         const payload = JSON.parse(atob(token.split(".")[1]));
         if (payload.role === "admin") {
@@ -44,10 +72,12 @@ const Login = () => {
           navigate("/dashboard");
         }
       } else {
-        setError(data.message || "Login failed");
+        setError(data.message || "Invalid email or password");
       }
     } catch (err) {
-      setError("Login failed");
+      setError("Unable to connect. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,7 +97,7 @@ const Login = () => {
 
         {/* Login Form */}
         <div className="login-form-container">
-          <form className="login-form" onSubmit={handleSubmit}>
+          <form className="login-form" onSubmit={handleSubmit} autoComplete="on">
             {/* Email Field */}
             <div className="form-group">
               <label htmlFor="email" className="form-label">
@@ -87,6 +117,7 @@ const Login = () => {
                   onChange={handleInputChange}
                   className="input-field"
                   placeholder="Enter your email"
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -110,11 +141,14 @@ const Login = () => {
                   onChange={handleInputChange}
                   className="input-field"
                   placeholder="Enter your password"
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   className="password-toggle"
                   onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                  disabled={loading}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -135,6 +169,7 @@ const Login = () => {
                   checked={formData.rememberMe}
                   onChange={handleInputChange}
                   className="checkbox-input"
+                  disabled={loading}
                 />
                 <label htmlFor="rememberMe" className="checkbox-label">
                   Remember me
@@ -146,48 +181,17 @@ const Login = () => {
             </div>
 
             {/* Submit Button */}
-            <button type="submit" className="submit-button">
-              <Heart className="h-5 w-5" />
-              <span>Sign In</span>
+            <button type="submit" className="submit-button" disabled={loading}>
+              {loading ? (
+                <span className="spinner" style={{ marginRight: 8 }}></span>
+              ) : (
+                <Heart className="h-5 w-5" />
+              )}
+              <span>{loading ? "Signing In..." : "Sign In"}</span>
             </button>
 
-            {/* Divider */}
-            <div className="divider">
-              <span className="divider-text">Or continue with</span>
-            </div>
-
-            {/* Social Login Buttons */}
-            <div className="social-buttons">
-              <button type="button" className="social-button">
-                <svg className="social-icon" viewBox="0 0 24 24">
-                  <path
-                    fill="currentColor"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  />
-                </svg>
-                <span>Google</span>
-              </button>
-              <button type="button" className="social-button">
-                <svg className="social-icon" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-                <span>Facebook</span>
-              </button>
-            </div>
-
-            {error && <div className="error">{error}</div>}
+            {/* Error Message */}
+            {error && <div className="login-error-message">{error}</div>}
           </form>
 
           {/* Sign Up Link */}
@@ -214,3 +218,7 @@ const Login = () => {
 };
 
 export default Login;
+// Add this to your main.css or Login.css:
+// .login-error-message { color: #e53935; background: #fff0f0; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 1rem; text-align: center; font-weight: 500; font-size: 1rem; }
+// .spinner { display: inline-block; width: 1.2em; height: 1.2em; border: 2.5px solid #40916c; border-top: 2.5px solid #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+// @keyframes spin { 100% { transform: rotate(360deg); } }
