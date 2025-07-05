@@ -10,6 +10,7 @@ import Footer from "./public/Footer.jsx";
 import Header from "./public/Header.jsx";
 import AdminDashboard from "./private/AdminDashboard.jsx";
 import AdopterDashboard from "./private/AdopterDashboard.jsx";
+import AdminRouteGuard from "./components/AdminRouteGuard.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -32,7 +33,13 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<ProtectedRoute><AdopterDashboard /></ProtectedRoute>} />
-        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin" element={
+          <AdminRoute>
+            <AdminRouteGuard>
+              <AdminDashboard />
+            </AdminRouteGuard>
+          </AdminRoute>
+        } />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />

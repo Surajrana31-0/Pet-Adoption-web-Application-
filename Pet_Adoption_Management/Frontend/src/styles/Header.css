@@ -81,6 +81,11 @@
   color: var(--gray-700);
   text-decoration: none;
   transition: color 0.3s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
 }
 
 .nav-link:hover {
@@ -112,6 +117,11 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
 }
 
 .login-button:hover {
@@ -129,6 +139,9 @@
   align-items: center;
   gap: 0.25rem;
   transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  margin: 0;
 }
 
 .signup-button:hover {
@@ -180,6 +193,13 @@
   color: var(--gray-700);
   text-decoration: none;
   transition: color 0.3s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  width: 100%;
 }
 
 .mobile-menu-link:hover {
