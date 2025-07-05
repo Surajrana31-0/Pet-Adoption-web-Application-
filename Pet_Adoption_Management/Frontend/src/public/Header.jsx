@@ -1,15 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Heart, Menu, X, User, PawPrint } from 'lucide-react';
+import { AuthContext } from '../AuthContext.jsx';
+import { useAdminSessionProtection } from '../hooks/useAdminSessionProtection.js';
+import AdminSessionPopup from '../components/AdminSessionPopup.jsx';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { role, isAuthenticated } = useContext(AuthContext);
+  const { 
+    isAdmin, 
+    isInAdminRoute, 
+    showConfirmation, 
+    pendingNavigation,
+    navigateWithProtection,
+    handleConfirmNavigation,
+    handleCancelNavigation
+  } = useAdminSessionProtection();
 
   const isActive = (path) => location.pathname === path;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Handle navigation with protection for admin users (only for homepage)
+  const handleNavigation = (to) => {
+    if (isAdmin && isInAdminRoute && to === '/') {
+      // Only protect navigation to homepage
+      navigateWithProtection(to);
+    } else {
+      // For all other routes, use normal navigation
+      window.location.href = to;
+    }
   };
 
   return (
@@ -28,12 +52,13 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="nav-desktop space-x-8">
-            <Link
-              to="/"
+            <button
+              onClick={() => handleNavigation('/')}
               className={`nav-link ${isActive('/') ? 'active' : ''}`}
+              style={{ font: 'inherit', background: 'none', border: 'none', color: 'inherit', padding: 0, margin: 0, cursor: 'pointer' }}
             >
               Home
-            </Link>
+            </button>
             <Link
               to="/adopt"
               className={`nav-link ${isActive('/adopt') ? 'active' : ''}`}
@@ -56,20 +81,21 @@ const Header = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="auth-buttons space-x-4">
-            <Link
-              to="/login"
+            <button
+              onClick={() => handleNavigation('/login')}
               className="login-button"
+              style={{ font: 'inherit', background: 'none', border: 'none', color: 'inherit', padding: 0, margin: 0, cursor: 'pointer' }}
             >
               <User className="h-4 w-4" />
               <span>Login</span>
-            </Link>
-            <Link
-              to="/signup"
+            </button>
+            <button
+              onClick={() => handleNavigation('/signup')}
               className="signup-button"
             >
               <Heart className="h-4 w-4" />
               <span>Sign Up</span>
-            </Link>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -84,13 +110,16 @@ const Header = () => {
         {/* Mobile Menu */}
         <div className={`mobile-menu ${isMenuOpen ? 'open' : ''}`}>
           <div className="mobile-menu-links">
-            <Link
-              to="/"
-              onClick={toggleMenu}
+            <button
+              onClick={() => {
+                handleNavigation('/');
+                toggleMenu();
+              }}
               className={`mobile-menu-link ${isActive('/') ? 'active' : ''}`}
+              style={{ font: 'inherit', background: 'none', border: 'none', color: 'inherit', padding: 0, margin: 0, cursor: 'pointer', textAlign: 'left', width: '100%' }}
             >
               Home
-            </Link>
+            </button>
             <Link
               to="/adopt"
               onClick={toggleMenu}
@@ -113,26 +142,39 @@ const Header = () => {
               Contact
             </Link>
             <div className="mobile-auth-buttons">
-              <Link
-                to="/login"
-                onClick={toggleMenu}
+              <button
+                onClick={() => {
+                  handleNavigation('/login');
+                  toggleMenu();
+                }}
                 className="login-button"
+                style={{ font: 'inherit', background: 'none', border: 'none', color: 'inherit', padding: 0, margin: 0, cursor: 'pointer' }}
               >
                 <User className="h-4 w-4" />
                 <span>Login</span>
-              </Link>
-              <Link
-                to="/signup"
-                onClick={toggleMenu}
+              </button>
+              <button
+                onClick={() => {
+                  handleNavigation('/signup');
+                  toggleMenu();
+                }}
                 className="signup-button"
               >
                 <Heart className="h-4 w-4" />
                 <span>Sign Up</span>
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Admin Session Protection Popup */}
+      <AdminSessionPopup
+        isOpen={showConfirmation}
+        onConfirm={handleConfirmNavigation}
+        onCancel={handleCancelNavigation}
+        targetRoute={pendingNavigation?.to}
+      />
     </header>
   );
 };
