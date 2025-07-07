@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Heart, PawPrint } from 'lucide-react';
 import { AuthContext } from "../AuthContext.jsx";
+import { authAPI } from '../utils/api';
 import "../styles/main.css";
 
 const validateEmail = (email) => {
@@ -55,27 +56,21 @@ const Login = () => {
     if (!validateFields()) return;
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email, password: formData.password }),
-      });
-      const data = await res.json();
-      if (res.ok && data.data?.access_token) {
-        login(data.data.access_token);
-        localStorage.setItem('token', data.data.access_token);
-        const token = data.data.access_token;
-        const payload = JSON.parse(atob(token.split(".")[1]));
+      const data = await authAPI.login(formData.email, formData.password);
+      if (data && data.token) {
+        login(data.token); // Use AuthContext login
+        // Decode token to get role
+        const payload = JSON.parse(atob(data.token.split(".")[1]));
         if (payload.role === "admin") {
           navigate("/admin");
         } else {
           navigate("/dashboard");
         }
       } else {
-        setError(data.message || "Invalid email or password");
+        setError("Invalid email or password");
       }
     } catch (err) {
-      setError("Unable to connect. Please try again later.");
+      setError(err.message || "Unable to connect. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -175,7 +170,7 @@ const Login = () => {
                   Remember me
                 </label>
               </div>
-              <Link to="/forgot-password" className="forgot-password">
+              <Link to="/reset-password" className="forgot-password">
                 Forgot password?
               </Link>
             </div>
