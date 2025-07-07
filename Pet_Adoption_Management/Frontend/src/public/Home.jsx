@@ -73,7 +73,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-background" style={{
-          backgroundImage: "url('https://wallpapercave.com/wp/wp2589117.jpg')"
+          backgroundImage: "url('https://wallpaperbat.com/img/669960-aesthetic-cat-laptop-wallpaper-top-free-aesthetic-cat-laptop-background.jpg')"
         }}></div>
         
         <div className="hero-content">
