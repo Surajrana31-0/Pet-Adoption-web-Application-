@@ -32,6 +32,7 @@
 
 /* Logo styles */
 .logo-container {
+  all: unset;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -40,10 +41,10 @@
 
 
 .logo-text {
-  font-family: 'Pacifico', cursive !important;
-  font-size: 2.5rem !important;
+  font-family: 'Jember Sketch Regular', cursive !important;
+  font-size: 3rem !important;
   font-weight: bold !important;
-  background: linear-gradient(90deg, #00c3ff, #ffff1c) !important;
+  background: black !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
@@ -63,6 +64,7 @@
   .nav-desktop {
     display: flex;
     align-items: center;
+    gap: 2rem;
   }
 }
 
@@ -98,6 +100,7 @@
   .auth-buttons {
     display: flex;
     align-items: center;
+    gap: 1rem;
   }
 }
 
@@ -120,7 +123,7 @@
 }
 
 .signup-button {
-  background: linear-gradient(to right, var(--orange-500), var(--pink-500));
+  background: var(--primary-accent);
   color: var(--white);
   padding: 0.5rem 1.5rem;
   border-radius: 9999px;
@@ -138,6 +141,8 @@
 .signup-button:hover {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   transform: scale(1.05);
+  background: var(--secondary-accent);
+  color: var(--text);
 }
 
 /* Mobile menu button */
