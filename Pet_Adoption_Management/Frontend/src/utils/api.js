@@ -34,6 +34,24 @@ export const authAPI = {
       throw err;
     }
   },
+  // Request password reset (send reset link to email)
+  requestPasswordReset: async (email) => {
+    try {
+      const res = await fetch(`${BASE_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Failed to send reset link');
+      }
+      return await res.json();
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  },
 };
 
 export const adoptionAPI = {
