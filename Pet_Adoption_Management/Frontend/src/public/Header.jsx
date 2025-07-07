@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Heart, Menu, X, User, PawPrint } from 'lucide-react';
+import { Heart, Menu, X, User } from 'lucide-react';
 import { AuthContext } from '../AuthContext.jsx';
 import { useAdminSessionProtection } from '../hooks/useAdminSessionProtection.js';
 import AdminSessionPopup from '../components/AdminSessionPopup.jsx';
@@ -42,11 +42,8 @@ const Header = () => {
         <div className="header-content flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="logo-container">
-            <div className="logo-icon">
-              <PawPrint className="h-6 w-6" />
-            </div>
             <span className="logo-text">
-              Pet-Ey
+              PetEy
             </span>
           </Link>
 

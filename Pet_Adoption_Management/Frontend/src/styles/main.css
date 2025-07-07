@@ -290,14 +290,7 @@ body {
   color: var(--white);
 }
 
-.logo-text {
-  font-size: 1.5rem;
-  font-weight: bold;
-  background: linear-gradient(to right, var(--orange-500), var(--pink-500));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+/* Logo text styling moved to Header.css */
 
 /* Navigation styles */
 .nav-desktop {

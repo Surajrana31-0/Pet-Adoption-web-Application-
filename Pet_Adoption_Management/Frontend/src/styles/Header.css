@@ -37,30 +37,21 @@
   gap: 0.5rem;
 }
 
-.logo-container:hover .logo-icon {
-  transform: scale(1.1);
-}
 
-.logo-icon {
-  background: linear-gradient(to right, var(--orange-500), var(--pink-500));
-  padding: 0.5rem;
-  border-radius: 9999px;
-  transition: transform 0.3s;
-}
-
-.logo-icon svg {
-  height: 1.5rem;
-  width: 1.5rem;
-  color: var(--white);
-}
 
 .logo-text {
-  font-size: 1.5rem;
-  font-weight: bold;
-  background: linear-gradient(to right, var(--orange-500), var(--pink-500));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  font-family: 'Pacifico', cursive !important;
+  font-size: 2.5rem !important;
+  font-weight: bold !important;
+  background: linear-gradient(90deg, #00c3ff, #ffff1c) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.15) !important;
+  letter-spacing: 0.1em !important;
+  text-decoration: none !important;
+  border: none !important;
 }
 
 /* Navigation styles */
