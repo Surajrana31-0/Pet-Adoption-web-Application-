@@ -60,26 +60,24 @@ const AdopterDashboard = () => {
   const [activeTab, setActiveTab] = useState('applications')
   const [profile, setProfile] = useState({ name: user?.name || '', email: user?.email || '' })
   const [editing, setEditing] = useState(false)
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      navigate('/')
-      return
-    }
-    fetchApplications()
-  }, [navigate])
+    fetchApplications();
+  }, []);
 
   const fetchApplications = async () => {
     try {
-      const data = await adoptionAPI.getUserApplications()
-      setApplications(data)
+      const data = await adoptionAPI.getUserApplications();
+      if (!data) throw new Error('Could not load applications');
+      setApplications(data);
     } catch (error) {
-      console.error('Error fetching applications:', error)
+      setError('Failed to load your applications. Please try again later.');
+      setApplications([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -142,7 +140,9 @@ const AdopterDashboard = () => {
         <h2>My Adoption Applications</h2>
         <button className="btn-primary" onClick={openBrowsePets}>Browse Pets</button>
       </div>
-      {applications.length === 0 ? (
+      {error ? (
+        <div className="error-message">{error}</div>
+      ) : applications.length === 0 ? (
         <div className="empty-state">
           <Heart className="empty-icon" />
           <h3>No Applications Yet</h3>
