@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Heart, Menu, X, User } from 'lucide-react';
 import { AuthContext } from '../AuthContext.jsx';
 import { useAdminSessionProtection } from '../hooks/useAdminSessionProtection.js';
@@ -8,6 +8,7 @@ import AdminSessionPopup from '../components/AdminSessionPopup.jsx';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { role, isAuthenticated } = useContext(AuthContext);
   const { 
     isAdmin, 
@@ -31,8 +32,8 @@ const Header = () => {
       // Only protect navigation to homepage
       navigateWithProtection(to);
     } else {
-      // For all other routes, use normal navigation
-      window.location.href = to;
+      // For all other routes, use React Router navigation
+      navigate(to);
     }
   };
 

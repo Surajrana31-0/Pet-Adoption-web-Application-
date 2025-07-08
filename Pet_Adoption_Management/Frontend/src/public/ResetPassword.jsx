@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { authAPI } from '../utils/api';
+import { requestPasswordReset } from '../utils/api';
 import '../styles/ResetPassword.css';
 
 const ResetPassword = () => {
@@ -18,7 +18,7 @@ const ResetPassword = () => {
     }
     setLoading(true);
     try {
-      await authAPI.requestPasswordReset(email);
+      await requestPasswordReset(email);
       setSuccess('If an account exists for this email, a reset link has been sent.');
     } catch (err) {
       setError(err.message || 'Failed to send reset link.');
