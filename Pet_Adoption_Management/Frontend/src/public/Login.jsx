@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Heart, PawPrint } from 'lucide-react';
 import { AuthContext } from "../AuthContext.jsx";
@@ -11,7 +11,7 @@ const validateEmail = (email) => {
 };
 
 const Login = () => {
-  const { login } = useContext(AuthContext);
+  const { login, isAuthenticated, role } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,6 +21,7 @@ const Login = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [redirecting, setRedirecting] = useState(false);
 
   // Auto-hide error after 4 seconds
   React.useEffect(() => {
@@ -29,6 +30,17 @@ const Login = () => {
       return () => clearTimeout(timer);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (isAuthenticated && role) {
+      setRedirecting(true);
+      if (role === "admin") {
+        navigate("/admin");
+      } else if (role === "user") {
+        navigate("/dashboard");
+      }
+    }
+  }, [isAuthenticated, role, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -57,15 +69,8 @@ const Login = () => {
     setLoading(true);
     try {
       const data = await authAPI.login(formData.email, formData.password);
-      if (data && data.token) {
-        login(data.token); // Use AuthContext login
-        // Decode token to get role
-        const payload = JSON.parse(atob(data.token.split(".")[1]));
-        if (payload.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/dashboard");
-        }
+      if (data && data.data && data.data.access_token) {
+        login(data.data.access_token); // Context will update, useEffect will handle navigation
       } else {
         setError("Invalid email or password");
       }
@@ -75,6 +80,10 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  if (redirecting) {
+    return <div className="loading-message">Redirecting to your dashboard...</div>;
+  }
 
   return (
     <div className="login-page">
