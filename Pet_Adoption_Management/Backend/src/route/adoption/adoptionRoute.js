@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.use(requireAuth);
 
+router.get('/user', adoptionController.getAllForUser);
 router.get('/', requireAdmin, adoptionController.getAll);
 router.post('/', adoptionController.create);
 router.get('/:id', adoptionController.getById);

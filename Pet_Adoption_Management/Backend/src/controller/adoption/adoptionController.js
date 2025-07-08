@@ -58,4 +58,19 @@ const deleteById = async (req, res) => {
   }
 };
 
-export const adoptionController = { getAll, getById, create, update, deleteById }; 
+const getAllForUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const adoptions = await Adoption.findAll({
+      where: { UserId: userId },
+      include: [User, Pet],
+      order: [['createdAt', 'DESC']],
+    });
+    res.status(200).json({ data: adoptions });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Failed to fetch your adoption requests' });
+  }
+};
+
+export const adoptionController = { getAll, getById, create, update, deleteById, getAllForUser }; 

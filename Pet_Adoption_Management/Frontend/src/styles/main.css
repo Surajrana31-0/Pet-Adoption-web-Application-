@@ -160,7 +160,7 @@ a:hover, a:focus {
 
 @font-face {
   font-family: "Jember Sketch Regular";
-  src: url('./assets/font/JEMBER SKETCH.TTF') format('opentype');
+  src: url('./assets/font/JEMBER SKETCH.TTF') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
