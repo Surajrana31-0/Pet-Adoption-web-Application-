@@ -59,12 +59,12 @@ export const authAPI = {
   },
 };
 
-export async function requestPasswordReset(email) {
+export async function requestPasswordReset(username, email) {
   try {
     const res = await fetch(`${BASE_URL}/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ username, email })
     });
     const contentType = res.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
@@ -80,12 +80,12 @@ export async function requestPasswordReset(email) {
   }
 }
 
-export async function confirmPasswordReset(token, newPassword) {
+export async function confirmPasswordReset(username, token, newPassword) {
   try {
-    const res = await fetch(`${BASE_URL}/reset-password/confirm`, {
+    const res = await fetch(`${BASE_URL}/new-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, newPassword })
+      body: JSON.stringify({ username, token, newPassword })
     });
     const contentType = res.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {

@@ -9,11 +9,13 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
+    username: '',
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
     location: '',
+    address: '',
     password: '',
     confirmPassword: '',
     agreeToTerms: false,
@@ -45,14 +47,19 @@ const Signup = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: formData.firstName + ' ' + formData.lastName,
+          username: formData.username,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phone: formData.phone,
+          location: formData.location,
+          address: formData.address,
+          agreeToTerms: formData.agreeToTerms
         })
       });
       const data = await response.json();
       if (response.ok) {
-        localStorage.setItem('token', data.data.access_token);
         setMessage('Signup successful! Redirecting to login...');
         setMessageType('success');
         setTimeout(() => {
@@ -94,6 +101,25 @@ const Signup = () => {
         {/* Signup Form */}
         <div className="form-container">
           <form className="signup-form" onSubmit={handleSubmit}>
+            {/* Username Field */}
+            <div className="form-group">
+              <label htmlFor="username" className="form-label">Username</label>
+              <div className="input-wrapper">
+                <div className="input-icon-wrapper">
+                  <User className="input-icon" />
+                </div>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Choose a username"
+                />
+              </div>
+            </div>
             {/* Name Fields */}
             <div className="name-group">
               <div className="form-group">
@@ -180,9 +206,7 @@ const Signup = () => {
 
             {/* Location Field */}
             <div className="form-group">
-              <label htmlFor="location" className="form-label">
-                Location
-              </label>
+              <label htmlFor="location" className="form-label">Location</label>
               <div className="input-wrapper">
                 <div className="input-icon-wrapper">
                   <MapPin className="input-icon" />
@@ -196,6 +220,25 @@ const Signup = () => {
                   onChange={handleInputChange}
                   className="form-input"
                   placeholder="City, State"
+                />
+              </div>
+            </div>
+            {/* Address Field */}
+            <div className="form-group">
+              <label htmlFor="address" className="form-label">Address</label>
+              <div className="input-wrapper">
+                <div className="input-icon-wrapper">
+                  <MapPin className="input-icon" />
+                </div>
+                <input
+                  id="address"
+                  name="address"
+                  type="text"
+                  required
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Street, City, State"
                 />
               </div>
             </div>
