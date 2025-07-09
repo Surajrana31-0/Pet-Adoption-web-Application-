@@ -24,12 +24,18 @@ const create = async (req, res) => {
         const body = req.body
         console.log(req.body)
         //validation
-        if (!body?.email || !body?.name || !body?.password)
-            return res.status(500).send({ message: "Invalid paylod" });
+        if (!body?.email || !body?.username || !body?.password || !body?.firstName || !body?.lastName || !body?.phone || !body?.location || !body?.address || body?.agreeToTerms !== true)
+            return res.status(500).send({ message: "Invalid payload: all fields required and terms must be agreed to." });
         const users = await User.create({
-            name: body.name,
+            username: body.username,
             email: body.email,
-            password: body.password
+            password: body.password,
+            firstName: body.firstName,
+            lastName: body.lastName,
+            phone: body.phone,
+            location: body.location,
+            address: body.address,
+            agreeToTerms: body.agreeToTerms
         });
         res.status(201).send({ data: users, message: "successfully created user" })
     } catch (e) {
@@ -53,9 +59,15 @@ const update = async (req, res) => {
         if (!oldUser) {
             return res.status(500).send({ message: "User not found" });
         }
-        oldUser.name = body.name;
+        oldUser.username = body.username;
         oldUser.password = body.password || oldUser.password;
-        oldUser.email = body.email
+        oldUser.email = body.email;
+        oldUser.firstName = body.firstName;
+        oldUser.lastName = body.lastName;
+        oldUser.phone = body.phone;
+        oldUser.location = body.location;
+        oldUser.address = body.address;
+        oldUser.agreeToTerms = body.agreeToTerms;
         oldUser.save();
         res.status(201).send({ data: oldUser, message: "user updated successfully" })
     } catch (e) {

@@ -2,6 +2,7 @@ import express from 'express'
 import bodyParser  from 'body-parser';
 import cors from 'cors';
 import { db } from './database/index.js';
+import './models/index.js'; // Ensure all models are registered before sync
 import {userRouter, adoptionRouter, favoriteRouter, authRouter, petRouter} from './route/index.js'
 import dotenv from 'dotenv'
 
