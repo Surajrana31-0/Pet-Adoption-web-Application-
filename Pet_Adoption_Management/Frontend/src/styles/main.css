@@ -159,7 +159,7 @@ a:hover, a:focus {
 }
 
 @font-face {
-  font-family: "Jember Sketch Regular";
+  font-family: "Jember Sketch";
   src: url('./assets/font/JEMBER SKETCH.TTF') format('truetype');
   font-weight: normal;
   font-style: normal;

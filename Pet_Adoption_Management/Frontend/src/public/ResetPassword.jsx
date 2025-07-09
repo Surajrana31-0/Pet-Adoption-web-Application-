@@ -3,23 +3,39 @@ import { requestPasswordReset } from '../utils/api';
 import '../styles/ResetPassword.css';
 
 const ResetPassword = () => {
-  const [email, setEmail] = useState('');
+  const [formData, setFormData] = useState({
+    username: '',
+    email: ''
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
-    if (!email) {
-      setError('Please enter your email address.');
+    if (!formData.username || !formData.email) {
+      setError('Please enter both username and email address.');
+      return;
+    }
+    // Basic email format validation
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.email)) {
+      setError('Please enter a valid email address.');
       return;
     }
     setLoading(true);
     try {
-      await requestPasswordReset(email);
-      setSuccess('If an account exists for this email, a reset link has been sent.');
+      await requestPasswordReset(formData.username, formData.email);
+      setSuccess('If this user exists, a reset link has been sent to your email.');
     } catch (err) {
       setError(err.message || 'Failed to send reset link.');
     } finally {
@@ -31,14 +47,25 @@ const ResetPassword = () => {
     <div className="reset-password-page">
       <div className="reset-password-container">
         <h2 className="reset-password-title">Reset Your Password</h2>
-        <p className="reset-password-desc">Enter your email address and we'll send you a link to reset your password.</p>
+        <p className="reset-password-desc">Enter your username and email address to receive a password reset link.</p>
         <form className="reset-password-form" onSubmit={handleSubmit}>
           <input
+            type="text"
+            name="username"
+            className="reset-password-input"
+            placeholder="Enter your username"
+            value={formData.username}
+            onChange={handleInputChange}
+            disabled={loading}
+            required
+          />
+          <input
             type="email"
+            name="email"
             className="reset-password-input"
             placeholder="Enter your email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={handleInputChange}
             disabled={loading}
             required
           />
