@@ -22,6 +22,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [redirecting, setRedirecting] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true); // default: checked
 
   // Auto-hide error after 4 seconds
   React.useEffect(() => {
@@ -44,10 +45,14 @@ const Login = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    if (name === "rememberMe") {
+      setRememberMe(checked);
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
   };
 
   const validateFields = () => {
@@ -70,7 +75,7 @@ const Login = () => {
     try {
       const data = await authAPI.login(formData.email, formData.password);
       if (data && data.data && data.data.access_token) {
-        login(data.data.access_token); // Context will update, useEffect will handle navigation
+        login(data.data.access_token, rememberMe); // Pass rememberMe!
       } else {
         setError("Invalid email or password");
       }
@@ -170,7 +175,7 @@ const Login = () => {
                   id="rememberMe"
                   name="rememberMe"
                   type="checkbox"
-                  checked={formData.rememberMe}
+                  checked={rememberMe}
                   onChange={handleInputChange}
                   className="checkbox-input"
                   disabled={loading}

@@ -13,6 +13,7 @@ import AdopterDashboard from "./private/AdopterDashboard.jsx";
 import AdminRouteGuard from "./components/AdminRouteGuard.jsx";
 import ResetPassword from "./public/ResetPassword.jsx";
 import NewPassword from "./public/NewPassword.jsx";
+import NavigationBar from "./components/admin/NavigationBar.jsx";
 
 // Generalized ProtectedRoute
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -25,9 +26,14 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 function App() {
   const { isAuthenticated, role } = useContext(AuthContext);
 
+  // Helper to determine if current route is private
+  // We'll use window.location.pathname for simplicity
+  const privateRoutes = ["/dashboard", "/admin", "/applications", "/profile"];
+  const isPrivateRoute = privateRoutes.some((route) => window.location.pathname.startsWith(route));
+
   return (
     <>
-      <Header />
+      {isAuthenticated && isPrivateRoute ? <NavigationBar /> : <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -53,6 +59,9 @@ function App() {
             </AdminRouteGuard>
           </ProtectedRoute>
         } />
+        {/* Add private routes for applications and profile if needed */}
+        <Route path="/applications" element={<ProtectedRoute requiredRole="user"><div>My Applications Page</div></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute requiredRole="user"><div>Profile Page</div></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />

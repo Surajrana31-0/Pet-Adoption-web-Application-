@@ -9,12 +9,14 @@ export const AuthProvider = ({ children }) => {
   const [role, setRole] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // On load, check both sessionStorage and localStorage for a token
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const sessionToken = sessionStorage.getItem("token");
+    const localToken = localStorage.getItem("token");
+    const storedToken = sessionToken || localToken;
     if (storedToken) {
       try {
         const decoded = jwt_decode(storedToken);
-        console.log("[AuthContext] Decoded JWT from localStorage:", decoded);
         if (decoded.exp * 1000 > Date.now()) {
           setUser({ id: decoded.id, email: decoded.email });
           setRole(decoded.role);
@@ -24,23 +26,28 @@ export const AuthProvider = ({ children }) => {
           logout();
         }
       } catch (err) {
-        console.error("[AuthContext] Failed to decode JWT from localStorage:", err);
         logout();
       }
     }
   }, []);
 
-  const login = (jwt) => {
+  // login now takes a second argument: rememberMe
+  const login = (jwt, rememberMe) => {
     try {
       const decoded = jwt_decode(jwt);
-      console.log("[AuthContext] Decoded JWT on login:", decoded);
       setUser({ id: decoded.id, email: decoded.email });
       setRole(decoded.role);
       setToken(jwt);
       setIsAuthenticated(true);
-      localStorage.setItem("token", jwt);
+      // Store in chosen storage
+      if (rememberMe) {
+        localStorage.setItem("token", jwt);
+        sessionStorage.removeItem("token");
+      } else {
+        sessionStorage.setItem("token", jwt);
+        localStorage.removeItem("token");
+      }
     } catch (err) {
-      console.error("[AuthContext] Failed to decode JWT on login:", err);
       logout();
     }
   };
@@ -51,6 +58,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setIsAuthenticated(false);
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
   };
 
   // Auto-logout on token expiry
