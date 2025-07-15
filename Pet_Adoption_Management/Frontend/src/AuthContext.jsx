@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
     if (storedToken) {
       try {
         const decoded = jwt_decode(storedToken);
+        console.log("[AuthContext] Decoded JWT from storage:", decoded);
         if (decoded.exp * 1000 > Date.now()) {
           setUser({ id: decoded.id, email: decoded.email });
           setRole(decoded.role);
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }) => {
           logout();
         }
       } catch (err) {
+        console.error("[AuthContext] Failed to decode JWT from storage:", err);
         logout();
       }
     }
@@ -35,6 +37,7 @@ export const AuthProvider = ({ children }) => {
   const login = (jwt, rememberMe) => {
     try {
       const decoded = jwt_decode(jwt);
+      console.log("[AuthContext] Decoded JWT on login:", decoded);
       setUser({ id: decoded.id, email: decoded.email });
       setRole(decoded.role);
       setToken(jwt);
@@ -48,6 +51,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token");
       }
     } catch (err) {
+      console.error("[AuthContext] Failed to decode JWT on login:", err);
       logout();
     }
   };
