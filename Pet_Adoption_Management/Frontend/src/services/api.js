@@ -11,6 +11,14 @@ export const addPet = (data) => axios.post(`${API_URL}/pets`, data);
 export const updatePet = (petId, data) => axios.put(`${API_URL}/pets/${petId}`, data);
 export const deletePet = (petId) => axios.delete(`${API_URL}/pets/${petId}`);
 
+// Authenticated user profile endpoints
+const api = {
+  get: (url, config) => axios.get(`${API_URL}${url}`, config),
+  put: (url, data, config) => axios.put(`${API_URL}${url}`, data, config),
+};
+
+export default api;
+
 
 // export const fetchPets = async () => {
 //   try {

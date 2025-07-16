@@ -113,6 +113,39 @@ const getById = async (req, res) => {
     }
 }
 
+// Get current user info
+export const getMe = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ["password"] }
+    });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Update current user info
+export const updateMe = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { firstName, lastName, phone, location, address } = req.body;
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    user.firstName = firstName ?? user.firstName;
+    user.lastName = lastName ?? user.lastName;
+    user.phone = phone ?? user.phone;
+    user.location = location ?? user.location;
+    user.address = address ?? user.address;
+    await user.save();
+    res.json({ message: "Profile updated", user });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 export const userController = {
     getAll,

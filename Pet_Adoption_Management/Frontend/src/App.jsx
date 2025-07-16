@@ -14,6 +14,7 @@ import AdminRouteGuard from "./components/AdminRouteGuard.jsx";
 import ResetPassword from "./public/ResetPassword.jsx";
 import NewPassword from "./public/NewPassword.jsx";
 import NavigationBar from "./components/admin/NavigationBar.jsx";
+import Profile from "./private/Profile.jsx";
 
 // Generalized ProtectedRoute
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -61,7 +62,7 @@ function App() {
         } />
         {/* Add private routes for applications and profile if needed */}
         <Route path="/applications" element={<ProtectedRoute requiredRole="user"><div>My Applications Page</div></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute requiredRole="user"><div>Profile Page</div></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute requiredRole="user"><Profile /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />
