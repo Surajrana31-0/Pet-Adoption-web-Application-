@@ -2,20 +2,22 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api";
 
-export const getUsers = ()=> axios.get(`${API_URL}/users`);
-export const getPets = ()=> axios.get(`${API_URL}/pets`);
-export const getAdoptions = ()=> axios.get(`${API_URL}/adoptions`);
-export const updateUser = (userId, data) => axios.put(`${API_URL}/users/${userId}`, data);
-export const deleteUser = (userId) => axios.delete(`${API_URL}/users/${userId}`);
-export const addPet = (data) => axios.post(`${API_URL}/pets`, data);    
-export const updatePet = (petId, data) => axios.put(`${API_URL}/pets/${petId}`, data);
-export const deletePet = (petId) => axios.delete(`${API_URL}/pets/${petId}`);
+// Create an Axios instance
+const api = axios.create({
+  baseURL: API_URL,
+});
 
-// Authenticated user profile endpoints
-const api = {
-  get: (url, config) => axios.get(`${API_URL}${url}`, config),
-  put: (url, data, config) => axios.put(`${API_URL}${url}`, data, config),
-};
+// Add a request interceptor to include the token
+api.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export default api;
 

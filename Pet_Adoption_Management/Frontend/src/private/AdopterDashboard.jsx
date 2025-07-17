@@ -79,8 +79,10 @@ const AdopterDashboard = () => {
   useEffect(() => {
     if (activeTab === 'viewPets') {
       setPetsLoading(true);
-      petAPI.getAllPets().then(data => {
-        setPets(data);
+      petAPI.getAllPets().then(res => {
+        // Accept both array and object with data property
+        const petList = Array.isArray(res) ? res : (Array.isArray(res.data) ? res.data : res.data?.data || []);
+        setPets(petList);
         setPetsLoading(false);
       }).catch(() => setPetsLoading(false));
     }
@@ -169,26 +171,31 @@ const AdopterDashboard = () => {
   }
 
   const openBrowsePets = async () => {
-    setShowBrowsePets(true)
-    setPetsLoading(true)
+    setShowBrowsePets(true);
+    setPetsLoading(true);
     try {
-      const data = await petAPI.getAllPets()
-      setPets(data)
+      const data = await petAPI.getAllPets();
+      // Defensive: handle array or object with data property
+      const petList = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+      setPets(petList);
     } catch (e) {
-      setPets([])
+      setPets([]); // Always set to an array on error
     } finally {
-      setPetsLoading(false)
+      setPetsLoading(false);
     }
-  }
+  };
 
-  const filteredPets = pets.filter(pet => {
-    const q = petSearch.toLowerCase()
-    return (
-      pet.name?.toLowerCase().includes(q) ||
-      pet.breed?.toLowerCase().includes(q) ||
-      pet.type?.toLowerCase().includes(q)
-    )
-  })
+  // Defensive filtering
+  const filteredPets = Array.isArray(pets)
+    ? pets.filter(pet => {
+        const q = petSearch.toLowerCase();
+        return (
+          pet.name?.toLowerCase().includes(q) ||
+          pet.breed?.toLowerCase().includes(q) ||
+          pet.type?.toLowerCase().includes(q)
+        );
+      })
+    : [];
 
   // Logout handler
   const handleLogout = () => {

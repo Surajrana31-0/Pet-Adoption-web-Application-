@@ -15,6 +15,7 @@ import ResetPassword from "./public/ResetPassword.jsx";
 import NewPassword from "./public/NewPassword.jsx";
 import NavigationBar from "./components/admin/NavigationBar.jsx";
 import Profile from "./private/Profile.jsx";
+import ProfileEdit from "./private/ProfileEdit.jsx";
 
 // Generalized ProtectedRoute
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -63,6 +64,7 @@ function App() {
         {/* Add private routes for applications and profile if needed */}
         <Route path="/applications" element={<ProtectedRoute requiredRole="user"><div>My Applications Page</div></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute requiredRole="user"><Profile /></ProtectedRoute>} />
+        <Route path="/profile/edit" element={<ProtectedRoute requiredRole="user"><ProfileEdit /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />

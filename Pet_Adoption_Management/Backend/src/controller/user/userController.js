@@ -133,9 +133,11 @@ export const getMe = async (req, res) => {
 export const updateMe = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { firstName, lastName, phone, location, address } = req.body;
+    const { email, username, firstName, lastName, phone, location, address } = req.body;
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
+    user.email = email ?? user.email;
+    user.username = username ?? user.username;
     user.firstName = firstName ?? user.firstName;
     user.lastName = lastName ?? user.lastName;
     user.phone = phone ?? user.phone;
