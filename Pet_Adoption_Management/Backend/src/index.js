@@ -12,13 +12,14 @@ dotenv.config();
 const app=express();
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 const port = process.env.PORT || 5000;
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/pets', petRouter);
 app.use('/api/adoptions', adoptionRouter);
-app.use('/api/favorites', favoriteRouter);
+app.use('/api/favorites', favoriteRouter);  
 app.use('/api/admin', adminRouter);
 
 app.listen(port, function() {

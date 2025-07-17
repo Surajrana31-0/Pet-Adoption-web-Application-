@@ -16,6 +16,8 @@ import NewPassword from "./public/NewPassword.jsx";
 import NavigationBar from "./components/admin/NavigationBar.jsx";
 import Profile from "./private/Profile.jsx";
 import ProfileEdit from "./private/ProfileEdit.jsx";
+import ManagePets from './private/ManagePets';
+import AddPet from './components/admin/AddPet';
 
 // Generalized ProtectedRoute
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -65,6 +67,8 @@ function App() {
         <Route path="/applications" element={<ProtectedRoute requiredRole="user"><div>My Applications Page</div></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute requiredRole="user"><Profile /></ProtectedRoute>} />
         <Route path="/profile/edit" element={<ProtectedRoute requiredRole="user"><ProfileEdit /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ManagePets />} />
+        <Route path="/add-pet" element={<AddPet />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />

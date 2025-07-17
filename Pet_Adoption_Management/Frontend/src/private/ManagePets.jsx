@@ -1,89 +1,109 @@
-import React, { useEffect, useState } from "react";
-import "../styles/AdminDashboard.css";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const mockPets = [
-  { id: 1, name: "Bella", breed: "Labrador", type: "Dog", age: "2 years", image: "" },
-  { id: 2, name: "Milo", breed: "Tabby", type: "Cat", age: "1 year", image: "" },
-];
-
-const ManagePets = ({ token }) => {
+export default function ManagePets() {
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const fetchPets = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/pets', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to fetch pets');
+      setPets(Array.isArray(data.data) ? data.data : []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPets = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const res = await fetch("http://localhost:5000/api/admin/pets", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch pets");
-        const data = await res.json();
-        setPets(data);
-      } catch {
-        setPets(mockPets);
-        setError("Could not load pets. Showing mock data.");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchPets();
-  }, [token]);
+  }, []);
 
-  const handleAdd = () => {
-    setMessage("Pet added (mock action)");
-    setTimeout(() => setMessage(""), 2000);
-  };
-  const handleEdit = (id) => {
-    setMessage("Pet edited (mock action)");
-    setTimeout(() => setMessage(""), 2000);
-  };
-  const handleDelete = (id) => {
-    setPets(pets.filter(p => p.id !== id));
-    setMessage("Pet deleted (mock action)");
-    setTimeout(() => setMessage(""), 2000);
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this pet?')) return;
+    try {
+      const res = await fetch(`/api/pets/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to delete pet');
+      setPets(pets.filter((pet) => pet.id !== id));
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   return (
-    <div className="admin-pets">
-      <h2>Manage Pets</h2>
-      <button className="admin-action add" onClick={handleAdd}>Add Pet</button>
+    <div className="manage-pets-container">
+      <div className="manage-pets-header">
+        <h2>Manage Pets</h2>
+        <button onClick={() => navigate('/add-pet')} className="add-pet-btn">Add Pet</button>
+      </div>
       {loading ? (
-        <div className="admin-loading">Loading pets...</div>
+        <div>Loading pets...</div>
+      ) : error ? (
+        <div className="form-error">{error}</div>
       ) : (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Breed</th>
-              <th>Type</th>
-              <th>Age</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pets.map(pet => (
-              <tr key={pet.id}>
-                <td>{pet.name}</td>
-                <td>{pet.breed}</td>
-                <td>{pet.type}</td>
-                <td>{pet.age}</td>
-                <td>
-                  <button className="admin-action edit" onClick={() => handleEdit(pet.id)}>Edit</button>
-                  <button className="admin-action delete" onClick={() => handleDelete(pet.id)}>Delete</button>
-                </td>
+        <div className="pets-table-wrapper">
+          <table className="pets-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Breed</th>
+                <th>Type</th>
+                <th>Age</th>
+                <th>Status</th>
+                <th>Image</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {pets.length === 0 ? (
+                <tr><td colSpan="7">No pets found.</td></tr>
+              ) : (
+                pets.map((pet) => (
+                  <tr key={pet.id}>
+                    <td>{pet.name}</td>
+                    <td>{pet.breed}</td>
+                    <td>{pet.type}</td>
+                    <td>{pet.age}</td>
+                    <td>{pet.status}</td>
+                    <td>
+                      {pet.image_path ? (
+                        <img
+                          src={`http://localhost:5000/${pet.image_path.replace(/\\/g, '/')}`}
+                          alt={pet.name}
+                          style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6 }}
+                        />
+                      ) : (
+                        <span style={{ color: '#aaa' }}>No image</span>
+                      )}
+                    </td>
+                    <td>
+                      {/* <button onClick={() => handleEdit(pet.id)}>Edit</button> */}
+                      <button onClick={() => handleDelete(pet.id)} className="delete-btn">Delete</button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
-      {error && <div className="admin-error-message">{error}</div>}
-      {message && <div className="admin-success-message">{message}</div>}
     </div>
   );
-};
-
-export default ManagePets; 
+} 

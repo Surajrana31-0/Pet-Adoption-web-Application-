@@ -57,5 +57,12 @@ export const User = sequelize.define("User", {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  
+  image_path: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
+  created_at: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
 });
