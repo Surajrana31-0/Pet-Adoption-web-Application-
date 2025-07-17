@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import '../styles/AdopterDashboard.css'
 import Modal from "../components/DialogueBox"
 import { petAPI } from '../utils/api'
+import AdoptionForm from "./AdoptionForm.jsx";
+import api from "../services/api";
 
 // Dummy/mock data for applications and favorites
 const mockApplications = [
@@ -44,6 +46,7 @@ const mockFavorites = [
 const TABS = [
   { key: 'applications', label: 'My Applications', icon: <PawPrint size={18} /> },
   { key: 'favorites', label: 'My Favorites', icon: <Star size={18} /> },
+  { key: 'viewPets', label: 'View Pets', icon: <User size={18} /> },
   { key: 'profile', label: 'My Profile', icon: <Edit2 size={18} /> },
   { key: 'settings', label: 'Settings', icon: <SettingsIcon size={18} /> },
 ];
@@ -61,16 +64,33 @@ const AdopterDashboard = () => {
   const [profile, setProfile] = useState({ name: user?.name || '', email: user?.email || '' })
   const [editing, setEditing] = useState(false)
   const [error, setError] = useState(null);
+  const [showAdoptionForm, setShowAdoptionForm] = useState(false);
+  const [selectedPet, setSelectedPet] = useState(null);
+  const [showPetDescription, setShowPetDescription] = useState(false);
+  const [petDescription, setPetDescription] = useState(null);
+  const [favorites, setFavorites] = useState([]);
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
 
   useEffect(() => {
     fetchApplications();
   }, []);
 
+  // Fetch pets when 'View Pets' tab is active
+  useEffect(() => {
+    if (activeTab === 'viewPets') {
+      setPetsLoading(true);
+      petAPI.getAllPets().then(data => {
+        setPets(data);
+        setPetsLoading(false);
+      }).catch(() => setPetsLoading(false));
+    }
+  }, [activeTab]);
+
+  // Fetch applications from backend
   const fetchApplications = async () => {
     try {
-      const data = await adoptionAPI.getUserApplications();
-      if (!data) throw new Error('Could not load applications');
-      setApplications(data);
+      const response = await api.get("/adoptions");
+      setApplications(response.data.data || []);
     } catch (error) {
       setError('Failed to load your applications. Please try again later.');
       setApplications([]);
@@ -78,6 +98,49 @@ const AdopterDashboard = () => {
       setLoading(false);
     }
   };
+
+  // Fetch favorites from backend
+  const fetchFavorites = async () => {
+    setFavoritesLoading(true);
+    try {
+      const response = await api.get("/favorites");
+      setFavorites(response.data.data || []);
+    } catch (error) {
+      console.error('Failed to fetch favorites:', error);
+      setFavorites([]);
+    } finally {
+      setFavoritesLoading(false);
+    }
+  };
+
+  // Add to favorites handler
+  const handleAddToFavorites = async (petId) => {
+    try {
+      await api.post(`/favorites/${petId}`);
+      // Refresh favorites list
+      fetchFavorites();
+    } catch (error) {
+      console.error('Failed to add to favorites:', error);
+    }
+  };
+
+  // Remove from favorites handler
+  const handleRemoveFavorite = async (petId) => {
+    try {
+      await api.delete(`/favorites/${petId}`);
+      // Refresh favorites list
+      fetchFavorites();
+    } catch (error) {
+      console.error('Failed to remove from favorites:', error);
+    }
+  };
+
+  // Fetch favorites when 'favorites' tab is active
+  useEffect(() => {
+    if (activeTab === 'favorites') {
+      fetchFavorites();
+    }
+  }, [activeTab]);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -184,7 +247,9 @@ const AdopterDashboard = () => {
       <div className="tab-header-row">
         <h2>My Favorite Pets</h2>
       </div>
-      {mockFavorites.length === 0 ? (
+      {favoritesLoading ? (
+        <div className="loading">Loading favorites...</div>
+      ) : favorites.length === 0 ? (
         <div className="empty-state">
           <Star className="empty-icon" />
           <h3>No Favorites Yet</h3>
@@ -192,13 +257,14 @@ const AdopterDashboard = () => {
         </div>
       ) : (
         <div className="favorites-list">
-          {mockFavorites.map(pet => (
+          {favorites.map(pet => (
             <div key={pet.id} className="favorite-card">
               <img src={pet.image_url || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} alt={pet.name} className="favorite-pet-image" />
               <div className="favorite-info">
                 <h3>{pet.name}</h3>
                 <p>{pet.breed} • {pet.type}</p>
                 <p>{pet.age}</p>
+                <button className="btn-secondary" onClick={() => handleRemoveFavorite(pet.id)}>Remove</button>
               </div>
             </div>
           ))}
@@ -206,6 +272,61 @@ const AdopterDashboard = () => {
       )}
     </div>
   )
+
+  const renderViewPets = () => (
+    <div className="tab-content">
+      <div className="tab-header-row">
+        <h2>Available Pets for Adoption</h2>
+      </div>
+      {petsLoading ? (
+        <div className="loading">Loading pets...</div>
+      ) : (
+        <div className="pets-grid">
+          {pets.length === 0 ? (
+            <div className="no-pets">No pets available.</div>
+          ) : (
+            pets.map(pet => (
+              <div key={pet.id} className="pet-card">
+                <img src={pet.image_url || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} alt={pet.name} className="pet-image" />
+                <div className="pet-info">
+                  <h3>{pet.name}</h3>
+                  <p>{pet.breed} • {pet.type}</p>
+                  <p>{pet.age}</p>
+                  <div className="pet-card-actions">
+                    <button className="btn-secondary" onClick={() => { setPetDescription(pet); setShowPetDescription(true); }}>Description</button>
+                    <button className="btn-secondary" onClick={() => handleAddToFavorites(pet.id)}>Add to Favorites</button>
+                    <button className="btn-primary" onClick={() => { setSelectedPet(pet); setShowAdoptionForm(true); }}>Adopt</button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+      {/* Pet Description Modal */}
+      {showPetDescription && petDescription && (
+        <Modal onClose={() => setShowPetDescription(false)}>
+          <div className="pet-description-modal">
+            <h2>{petDescription.name}</h2>
+            <img src={petDescription.image_url || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} alt={petDescription.name} className="pet-image-modal" />
+            <p><strong>Breed:</strong> {petDescription.breed}</p>
+            <p><strong>Type:</strong> {petDescription.type}</p>
+            <p><strong>Age:</strong> {petDescription.age}</p>
+            <p><strong>Description:</strong> {petDescription.description}</p>
+            <button className="btn-primary" onClick={() => setShowPetDescription(false)}>Close</button>
+          </div>
+        </Modal>
+      )}
+      {/* Adoption Form Modal */}
+      {showAdoptionForm && selectedPet && (
+        <AdoptionForm
+          pet={selectedPet}
+          onClose={() => setShowAdoptionForm(false)}
+          onSuccess={() => { setShowAdoptionForm(false); fetchApplications(); }}
+        />
+      )}
+    </div>
+  );
 
   const renderProfile = () => (
     <div className="tab-content">
@@ -285,6 +406,7 @@ const AdopterDashboard = () => {
       <main className="dashboard-main-content">
         {activeTab === 'applications' && renderApplications()}
         {activeTab === 'favorites' && renderFavorites()}
+        {activeTab === 'viewPets' && renderViewPets()}
         {activeTab === 'profile' && renderProfile()}
         {activeTab === 'settings' && renderSettings()}
       </main>

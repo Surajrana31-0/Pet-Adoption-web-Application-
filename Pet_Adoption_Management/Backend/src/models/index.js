@@ -1,4 +1,6 @@
 export * from './user/User.js'
 export * from './pet/Pet.js'
 export * from './adoption/Adoption.js'
+export * from './adoption/AdoptBy.js'
+export * from './adoption/Adoptions.js'
 export * from './favorite/Favorite.js'

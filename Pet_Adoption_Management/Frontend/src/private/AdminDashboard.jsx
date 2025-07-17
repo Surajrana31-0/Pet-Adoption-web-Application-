@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../AuthContext.jsx";
 import jwtDecode from "jwt-decode";
 import AdminSidebar from "./AdminSidebar";
 import AdminOverview from "./AdminOverview";
@@ -19,6 +20,7 @@ const TABS = [
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState("overview");
   const [admin, setAdmin] = useState(null);
   const [token, setToken] = useState("");
@@ -38,8 +40,8 @@ const AdminDashboard = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
+    logout();
+    navigate("/login");
   };
 
   return (
