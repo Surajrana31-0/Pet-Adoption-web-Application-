@@ -38,6 +38,23 @@ const getAllForUser = async (req, res) => {
   }
 };
 
+// GET /api/adoptions/admin (admin only)
+const getAllForAdmin = async (req, res) => {
+  try {
+    const adoptions = await Adoptions.findAll({
+      include: [
+        { model: AdoptBy },
+        { model: Pet },
+      ],
+      order: [['created_at', 'DESC']]
+    });
+    res.status(200).json({ data: adoptions });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Failed to fetch adoptions' });
+  }
+};
+
 // PATCH /api/adoptions/:id/approve (admin only)
 const approve = async (req, res) => {
   try {
@@ -52,6 +69,18 @@ const approve = async (req, res) => {
   }
 };
 
-// Optionally, keep or update getAll, getById, update, deleteById for admin use
+// PATCH /api/adoptions/:id/reject (admin only)
+const reject = async (req, res) => {
+  try {
+    const adoption = await Adoptions.findByPk(req.params.id);
+    if (!adoption) return res.status(404).json({ message: 'Adoption not found' });
+    adoption.status = 'rejected';
+    await adoption.save();
+    res.json({ message: 'Adoption rejected', adoption });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Failed to reject adoption' });
+  }
+};
 
-export const adoptionController = { create, getAllForUser, approve }; 
+export const adoptionController = { create, getAllForUser, getAllForAdmin, approve, reject }; 

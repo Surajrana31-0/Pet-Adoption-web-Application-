@@ -8,6 +8,8 @@ router.use(requireAuth);
 
 router.post('/', adoptionController.create);
 router.get('/', adoptionController.getAllForUser);
+router.get('/admin', requireAdmin, adoptionController.getAllForAdmin);
 router.patch('/:id/approve', requireAdmin, adoptionController.approve);
+router.patch('/:id/reject', requireAdmin, adoptionController.reject);
 
 export { router as adoptionRouter }; 

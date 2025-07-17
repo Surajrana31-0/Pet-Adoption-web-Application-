@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import '../../styles/ManageUsers.css';
+import '../styles/ManageUsers.css';
 
 const API_URL = '/api/users';
 
@@ -89,86 +89,77 @@ export default function ManageUsers() {
   };
 
   return (
-    <div className="manage-users-root">
-      <aside className="sidebar">
-        <h2>Admin</h2>
-        <nav>
-          <a href="/dashboard">Dashboard</a>
-          <a href="/manage-users" className="active">Manage Users</a>
-        </nav>
-      </aside>
-      <main className="manage-users-main">
-        <header className="manage-users-header">
-          <h1>Manage Users</h1>
-          <input
-            type="text"
-            placeholder="Search by name or email..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="search-input"
-          />
-        </header>
-        {loading ? (
-          <div className="loading">Loading users...</div>
-        ) : error ? (
-          <div className="form-error">{error}</div>
-        ) : (
-          <div className="users-table-wrapper">
-            <table className="users-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.length === 0 ? (
-                  <tr><td colSpan="4">No users found.</td></tr>
-                ) : (
-                  users.map(user => (
-                    <tr key={user.id}>
-                      <td className="user-name-cell">
-                        <span className="user-img-wrapper">
-                          {user.image_path ? (
-                            <img
-                              src={`http://localhost:5000/${user.image_path.replace(/\\/g, '/')}`}
-                              alt={user.username || user.email}
-                              className="user-img"
-                            />
-                          ) : (
-                            <span className="user-img user-img-placeholder">{user.username ? user.username[0].toUpperCase() : '?'}</span>
-                          )}
-                        </span>
-                        <span className="user-name">{user.firstName || ''} {user.lastName || ''}</span>
-                      </td>
-                      <td>{user.email}</td>
-                      <td>{user.role}</td>
-                      <td>
-                        <button
-                          className="role-btn"
-                          disabled={actionLoading === user.id}
-                          onClick={() => handleRoleToggle(user)}
-                        >
-                          {user.role === 'admin' ? 'Demote' : 'Promote'}
-                        </button>
-                        <button
-                          className="delete-btn"
-                          disabled={actionLoading === user.id}
-                          onClick={() => handleDelete(user)}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </main>
+    <div className="manage-users-main">
+      <header className="manage-users-header">
+        <h1>Manage Users</h1>
+        <input
+          type="text"
+          placeholder="Search by name or email..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="search-input"
+        />
+      </header>
+      {loading ? (
+        <div className="loading">Loading users...</div>
+      ) : error ? (
+        <div className="form-error">{error}</div>
+      ) : (
+        <div className="users-table-wrapper">
+          <table className="users-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.length === 0 ? (
+                <tr><td colSpan="4">No users found.</td></tr>
+              ) : (
+                users.map(user => (
+                  <tr key={user.id}>
+                    <td className="user-name-cell">
+                      <span className="user-img-wrapper">
+                        {user.image_path ? (
+                          <img
+                            src={`http://localhost:5000/${user.image_path.replace(/\\/g, '/')}`}
+                            alt={user.username || user.email}
+                            className="user-img"
+                          />
+                        ) : (
+                          <span className="user-img user-img-placeholder">{user.username ? user.username[0].toUpperCase() : '?'}</span>
+                        )}
+                      </span>
+                      <span className="user-name">{user.firstName || ''} {user.lastName || ''}</span>
+                    </td>
+                    <td>{user.email}</td>
+                    <td>{user.role}</td>
+                    <td>
+                      <button
+                        className="role-btn"
+                        disabled={actionLoading === user.id}
+                        onClick={() => handleRoleToggle(user)}
+                      >
+                        {user.role === 'admin' ? 'Demote' : 'Promote'}
+                      </button>
+                      <button
+                        className="delete-btn"
+                        disabled={actionLoading === user.id}
+                        onClick={() => handleDelete(user)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 } 
