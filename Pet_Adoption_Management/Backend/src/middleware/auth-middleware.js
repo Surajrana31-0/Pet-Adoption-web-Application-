@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export function requireAuth(req, res, next) {
+  console.log("requireAuth middleware called");
   const authHeader = req.header("Authorization");
   if (!authHeader) return res.status(401).json({ message: "No token provided" });
   const token = authHeader.split(" ")[1];

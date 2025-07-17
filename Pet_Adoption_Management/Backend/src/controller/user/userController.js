@@ -115,6 +115,7 @@ const getById = async (req, res) => {
 
 // Get current user info
 export const getMe = async (req, res) => {
+  console.log("req.user:", req.user); // Debug line
   try {
     const userId = req.user.id;
     const user = await User.findByPk(userId, {
@@ -123,6 +124,7 @@ export const getMe = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (err) {
+    console.error("getMe error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };

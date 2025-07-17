@@ -238,6 +238,9 @@ const AdopterDashboard = () => {
       </div>
       <div className="settings-placeholder">
         <p>Change password and notification preferences coming soon!</p>
+        <button className="btn-primary" style={{marginTop: '1.5rem'}} onClick={() => navigate('/profile')}>
+          Edit Profile
+        </button>
       </div>
     </div>
   )

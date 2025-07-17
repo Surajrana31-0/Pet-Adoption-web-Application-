@@ -22,7 +22,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const res = await api.get("/user/me", {
+        const res = await api.get("/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setForm(res.data);
@@ -46,7 +46,7 @@ const Profile = () => {
     setMessage("");
     setError("");
     try {
-      const res = await api.put("/user/me", form, {
+      const res = await api.put("/users/me", form, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("Profile updated!");
