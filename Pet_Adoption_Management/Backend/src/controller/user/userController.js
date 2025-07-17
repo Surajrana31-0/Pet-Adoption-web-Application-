@@ -127,18 +127,35 @@ export const getMe = async (req, res) => {
 export const updateMe = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { email, username, firstName, lastName, phone, location, address } = req.body;
+    const { email, firstName, lastName, phone, location, address, deleteImage } = req.body;
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
-    user.email = email ?? user.email;
-    user.username = username ?? user.username;
-    user.firstName = firstName ?? user.firstName;
-    user.lastName = lastName ?? user.lastName;
+    // Validate required fields
+    if (!firstName || !lastName || !email) {
+      return res.status(400).json({ message: "First name, last name, and email are required." });
+    }
+    user.email = email;
+    user.firstName = firstName;
+    user.lastName = lastName;
     user.phone = phone ?? user.phone;
     user.location = location ?? user.location;
     user.address = address ?? user.address;
+    // Handle image upload
+    if (req.file) {
+      if (user.image_path && fs.existsSync(user.image_path)) {
+        fs.unlinkSync(user.image_path);
+      }
+      user.image_path = req.file.path;
+    } else if (deleteImage === 'true' || deleteImage === true) {
+      if (user.image_path && fs.existsSync(user.image_path)) {
+        fs.unlinkSync(user.image_path);
+      }
+      user.image_path = null;
+    }
     await user.save();
-    res.json({ message: "Profile updated", user });
+    // Exclude password from response
+    const { password, ...userData } = user.toJSON();
+    res.json({ message: "Profile updated", user: userData });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }

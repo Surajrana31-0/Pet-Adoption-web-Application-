@@ -22,7 +22,15 @@ router.patch(
 router.get("/:id", userController.getById);
 router.delete("/:id", requireAdmin, userController.delelteById);
 router.get('/me', getMe);
-router.put('/me', updateMe);
+router.put('/me',
+  upload.single('image'),
+  [
+    body('firstName').notEmpty().withMessage('First name is required'),
+    body('lastName').notEmpty().withMessage('Last name is required'),
+    body('email').isEmail().withMessage('Valid email is required'),
+  ],
+  updateMe
+);
 
 export  {router as userRouter };
 

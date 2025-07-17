@@ -1,5 +1,5 @@
 import React from "react";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, X, Settings } from "lucide-react";
 import "../styles/AdminDashboard.css";
 
 const AdminSidebar = ({ open, setOpen, activeTab, setActiveTab, admin, onLogout, tabs }) => (
@@ -24,6 +24,12 @@ const AdminSidebar = ({ open, setOpen, activeTab, setActiveTab, admin, onLogout,
               {tab.label}
             </button>
           ))}
+          <button
+            className={`admin-nav-link${activeTab === 'settings' ? ' active' : ''}`}
+            onClick={() => setActiveTab('settings')}
+          >
+            <Settings size={18} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Settings
+          </button>
           <button className="admin-nav-link logout" onClick={onLogout}>
             <LogOut size={18} /> Logout
           </button>

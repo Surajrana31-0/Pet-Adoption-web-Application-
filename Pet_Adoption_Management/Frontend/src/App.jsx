@@ -18,6 +18,7 @@ import Profile from "./private/Profile.jsx";
 import ProfileEdit from "./private/ProfileEdit.jsx";
 import ManagePets from './private/ManagePets';
 import AddPet from './components/admin/AddPet';
+import { ToastProvider } from "./components/ToastContext";
 
 // Generalized ProtectedRoute
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -36,7 +37,7 @@ function App() {
   const isPrivateRoute = privateRoutes.some((route) => window.location.pathname.startsWith(route));
 
   return (
-    <>
+    <ToastProvider>
       {isAuthenticated && isPrivateRoute ? <NavigationBar /> : <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
@@ -72,7 +73,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />
-    </>
+    </ToastProvider>
   );
 }
 
