@@ -109,7 +109,8 @@ const getById = async (req, res) => {
 
 // Get current user info
 export const getMe = async (req, res) => {
-  console.log("req.user:", req.user); // Debug line
+  console.log("getMe called, req.user:", req.user);
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
   try {
     const userId = req.user.id;
     const user = await User.findByPk(userId, {
@@ -125,6 +126,7 @@ export const getMe = async (req, res) => {
 
 // Update current user info
 export const updateMe = async (req, res) => {
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
   try {
     const userId = req.user.id;
     const { email, firstName, lastName, phone, location, address, deleteImage } = req.body;

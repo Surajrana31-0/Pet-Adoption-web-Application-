@@ -21,15 +21,10 @@ const AdminSidebar = ({ open, setOpen, activeTab, setActiveTab, admin, onLogout,
               className={`admin-nav-link${activeTab === tab.key ? " active" : ""}`}
               onClick={() => setActiveTab(tab.key)}
             >
+              {tab.key === 'settings' && <Settings size={18} style={{ marginRight: 6, verticalAlign: 'middle' }} />}
               {tab.label}
             </button>
           ))}
-          <button
-            className={`admin-nav-link${activeTab === 'settings' ? ' active' : ''}`}
-            onClick={() => setActiveTab('settings')}
-          >
-            <Settings size={18} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Settings
-          </button>
           <button className="admin-nav-link logout" onClick={onLogout}>
             <LogOut size={18} /> Logout
           </button>
