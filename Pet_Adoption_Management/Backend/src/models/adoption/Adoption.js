@@ -16,7 +16,11 @@ export const Adoption = sequelize.define("Adoption", {
   other_pets: { type: DataTypes.STRING(200) },
   children: { type: DataTypes.STRING(50) },
   work_schedule: { type: DataTypes.STRING(50) },
+  user_id: { type: DataTypes.INTEGER, allowNull: false, field: 'user_id' },
+  pet_id: { type: DataTypes.INTEGER, allowNull: false, field: 'pet_id' },
   created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+}, {
+  tableName: 'Adoptions',
 });
 
 // Associations are now handled in models/index.js to avoid conflicts 

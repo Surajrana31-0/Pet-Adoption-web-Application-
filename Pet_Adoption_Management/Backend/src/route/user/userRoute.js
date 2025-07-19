@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAll, update, deleteById, getById, getMe, updateMe } from '../../controller/user/userController.js';
+import { getAll, update, deleteById, getById, getMe, updateMe, getProfile } from '../../controller/user/userController.js';
 import { requireAuth, requireAdmin } from '../../middleware/auth-middleware.js';
 import upload from '../../middleware/multerConfig.js';
 import { body } from 'express-validator';
@@ -32,6 +32,7 @@ router.put('/me',
   ],
   updateMe
 );
+router.get('/profile', getProfile);
 
 export  {router as userRouter };
 

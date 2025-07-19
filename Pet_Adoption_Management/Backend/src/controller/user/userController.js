@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { Op } from 'sequelize';
 import { validationResult } from 'express-validator';
+import { Pet } from '../../models/index.js';
 
 /**
  *  fetch all users (with optional search)
@@ -150,36 +151,88 @@ const updateMe = async (req, res) => {
     const { email, firstName, lastName, phone, location, address, deleteImage } = req.body;
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
+
     // Validate required fields
     if (!firstName || !lastName || !email) {
       return res.status(400).json({ message: "First name, last name, and email are required." });
     }
+
     user.email = email;
     user.firstName = firstName;
     user.lastName = lastName;
     user.phone = phone ?? user.phone;
     user.location = location ?? user.location;
     user.address = address ?? user.address;
+
     // Handle image upload
     if (req.file) {
+      // Remove old image if exists
       if (user.image_path && fs.existsSync(user.image_path)) {
         fs.unlinkSync(user.image_path);
       }
-      user.image_path = req.file.path;
+      user.image_path = req.file.path; // or req.file.filename if you want just the filename
     } else if (deleteImage === 'true' || deleteImage === true) {
       if (user.image_path && fs.existsSync(user.image_path)) {
         fs.unlinkSync(user.image_path);
       }
       user.image_path = null;
     }
+
     await user.save();
-    // Exclude password from response
     const { password, ...userData } = user.toJSON();
     res.json({ message: "Profile updated", user: userData });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error("updateMe error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// GET /api/user/profile - Get current user's profile and adopted pets
+const getProfile = async (req, res) => {
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+  try {
+    const userId = req.user.id;
+    // Fetch user profile
+    const user = await User.findByPk(userId, {
+      attributes: {
+        exclude: ["password"]
+      }
+    });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    // Fetch adopted pets (status: 'Adopted')
+    const adoptions = await user.getAdoptions({
+      where: { status: 'Adopted' },
+      include: [{
+        model: Pet,
+        attributes: ['id', 'name', 'breed', 'type', 'age', 'image_path', 'status']
+      }],
+      order: [['created_at', 'DESC']]
+    });
+    // Format adopted pets
+    const adoptedPets = adoptions.map(adoption => adoption.Pet);
+    // Prepare response
+    const userData = user.toJSON();
+    res.json({
+      profile: {
+        id: userData.id,
+        username: userData.username,
+        first_name: userData.firstName ?? userData.first_name ?? "",
+        last_name: userData.lastName ?? userData.last_name ?? "",
+        email: userData.email,
+        phone: userData.phone ?? userData.phone_number ?? "",
+        location: userData.location ?? "",
+        address: userData.address ?? "",
+        image_path: userData.image_path ?? "",
+        role: userData.role,
+        created_at: userData.created_at,
+      },
+      adoptedPets
+    });
+  } catch (err) {
+    console.error("getProfile error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
 
-export { getAll, getById, deleteById, update, getMe, updateMe };
+export { getAll, getById, deleteById, update, getMe, updateMe, getProfile };

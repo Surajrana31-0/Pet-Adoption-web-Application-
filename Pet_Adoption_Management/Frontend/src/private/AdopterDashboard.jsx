@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import '../styles/AdopterDashboard.css'
 import api, { getImageUrl } from "../services/api";
 import { useToast } from '../components/ToastContext';
-
+import MyProfile from './MyProfile.jsx';
 
 
 const TABS = [
@@ -34,10 +34,22 @@ const AdopterDashboard = () => {
   const [favoriteSearch, setFavoriteSearch] = useState("");
   const [adoptError, setAdoptError] = useState("");
   const addToast = useToast();
+  const [sidebarProfile, setSidebarProfile] = useState({ username: '', image_path: '' });
 
   useEffect(() => {
     fetchApplications();
   }, []);
+
+  useEffect(() => {
+    api.get('/users/profile').then(res => {
+      setSidebarProfile({
+        username: res.data.profile.username || '',
+        image_path: res.data.profile.image_path || '',
+      });
+    }).catch(() => {
+      setSidebarProfile({ username: user?.username || '', image_path: '' });
+    });
+  }, [user]);
 
   // Handle tab parameter from URL
   useEffect(() => {
@@ -374,25 +386,7 @@ const AdopterDashboard = () => {
 
   const renderProfile = () => (
     <div className="tab-content">
-      <div className="tab-header-row">
-        <h2>My Profile</h2>
-        {!editing ? (
-          <button className="btn-primary" onClick={() => setEditing(true)}>Edit</button>
-        ) : (
-          <button className="btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
-        )}
-      </div>
-      <form className="profile-form" onSubmit={e => { e.preventDefault(); setEditing(false); }}>
-        <div className="form-group">
-          <label>Name</label>
-          <input type="text" value={profile.name} disabled={!editing} onChange={e => setProfile({ ...profile, name: e.target.value })} />
-        </div>
-        <div className="form-group">
-          <label>Email</label>
-          <input type="email" value={profile.email} disabled={!editing} onChange={e => setProfile({ ...profile, email: e.target.value })} />
-        </div>
-        {editing && <button className="btn-primary" type="submit">Save</button>}
-      </form>
+      <MyProfile />
     </div>
   )
 
@@ -423,11 +417,23 @@ const AdopterDashboard = () => {
       <aside className="dashboard-sidebar">
         <div className="sidebar-profile">
           <div className="profile-pic-placeholder">
-            <User size={48} />
+            {sidebarProfile.image_path ? (
+              <img
+                src={getImageUrl(sidebarProfile.image_path)}
+                alt="Profile"
+                className="sidebar-profile-pic"
+                onError={e => { e.target.src = '/default-user.png'; }}
+              />
+            ) : (
+              <img
+                src={'/default-user.png'}
+                alt="Profile"
+                className="sidebar-profile-pic"
+              />
+            )}
           </div>
           <div className="profile-details">
-            <span className="profile-name">{user?.name}</span>
-            <span className="profile-email">{user?.email}</span>
+            <span className="profile-name">{sidebarProfile.username}</span>
           </div>
         </div>
         <nav className="sidebar-nav">
