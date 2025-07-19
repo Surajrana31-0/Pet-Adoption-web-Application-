@@ -3,7 +3,7 @@ import '../styles/ManageAdoptions.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const API_URL = '/api/adoptions/admin';
+const API_URL = '/api/adoptions';
 
 function formatDate(dateStr) {
   const d = new Date(dateStr);
@@ -37,7 +37,6 @@ export default function ManageAdoptions() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Could not load adoptions');
-      console.log('Adoptions data received:', data.data);
       setAdoptions(Array.isArray(data.data) ? data.data : []);
       setFiltered(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
@@ -76,15 +75,15 @@ export default function ManageAdoptions() {
     setActionLoading(id + action);
     try {
       const res = await fetch(`/api/adoptions/${id}/${action}`, {
-        method: 'PATCH',
+        method: 'PUT',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || `Failed to ${action} adoption`);
-      setAdoptions(adoptions.map(a => a.id === id ? { ...a, status: action === 'approve' ? 'approved' : 'rejected' } : a));
-      setFiltered(filtered.map(a => a.id === id ? { ...a, status: action === 'approve' ? 'approved' : 'rejected' } : a));
+      setAdoptions(adoptions.map(a => a.id === id ? { ...a, status: action === 'approve' ? 'APPROVED' : 'REJECTED' } : a));
+      setFiltered(filtered.map(a => a.id === id ? { ...a, status: action === 'approve' ? 'APPROVED' : 'REJECTED' } : a));
       toast.success(`Adoption ${action === 'approve' ? 'approved' : 'rejected'}!`);
     } catch (err) {
       setError(err.message);
@@ -129,64 +128,54 @@ export default function ManageAdoptions() {
               ) : (
                 filtered.map(adoption => (
                   <tr key={adoption.id}>
-                    <td className="adoption-applicant-cell">
-                      {adoption.User ? (
-                        <>
-                          <span className="adoption-user-img-wrapper">
-                            {adoption.User.image_path ? (
-                              <img
-                                src={`http://localhost:5000/uploads/${adoption.User.image_path}`}
-                                alt={`${adoption.User.first_name || ''} ${adoption.User.last_name || ''}`}
-                                className="adoption-user-img"
-                                onError={(e) => {
-                                  e.target.style.display = 'none';
-                                  e.target.nextSibling.style.display = 'inline-block';
-                                }}
-                              />
-                            ) : (
-                              <span className="adoption-user-img adoption-user-img-placeholder">
-                                {(adoption.User.first_name || 'U')[0].toUpperCase()}
-                              </span>
-                            )}
-                            <span className="adoption-user-img adoption-user-img-placeholder" style={{ display: 'none' }}>
-                              {(adoption.User.first_name || 'U')[0].toUpperCase()}
+                    <td>
+                      <span className="adoption-applicant-content">
+                        <span className="adoption-user-img-wrapper">
+                          {adoption.User?.image_path ? (
+                            <img
+                              src={`http://localhost:5000/uploads/${adoption.User.image_path}`}
+                              alt={`${adoption.User.first_name || ''} ${adoption.User.last_name || ''}`}
+                              className="adoption-user-img"
+                              onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'inline-block'; }}
+                            />
+                          ) : (
+                            <span className="adoption-user-img adoption-user-img-placeholder">
+                              {(adoption.User?.first_name || 'U')[0].toUpperCase()}
                             </span>
+                          )}
+                          <span className="adoption-user-img adoption-user-img-placeholder" style={{ display: 'none' }}>
+                            {(adoption.User?.first_name || 'U')[0].toUpperCase()}
                           </span>
-                          <span className="adoption-user-name">
-                            {adoption.User.first_name || 'Unknown'} {adoption.User.last_name || ''}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="adoption-user-name">Unknown</span>
-                      )}
+                        </span>
+                        <span className="adoption-user-name">
+                          {adoption.User ? `${adoption.User.first_name} ${adoption.User.last_name}` : 'Unknown'}
+                        </span>
+                      </span>
                     </td>
-                    <td className="adoption-pet-cell">
-                      {adoption.Pet && adoption.Pet.name ? (
-                        <>
-                          <span className="adoption-pet-img-wrapper">
-                            {adoption.Pet.image_path ? (
-                              <img
-                                src={`http://localhost:5000/uploads/${adoption.Pet.image_path}`}
-                                alt={adoption.Pet.name}
-                                className="adoption-pet-img"
-                                onError={(e) => {
-                                  e.target.style.display = 'none';
-                                  e.target.nextSibling.style.display = 'inline-block';
-                                }}
-                              />
-                            ) : (
-                              <span className="adoption-pet-img adoption-pet-img-placeholder">?</span>
-                            )}
-                            <span className="adoption-pet-img adoption-pet-img-placeholder" style={{ display: 'none' }}>?</span>
-                          </span>
-                          <span className="adoption-pet-name">{adoption.Pet.name}</span>
-                        </>
-                      ) : (
-                        <span className="adoption-pet-name">Unknown</span>
-                      )}
+                    <td>
+                      <span className="adoption-pet-content">
+                        <span className="adoption-pet-img-wrapper">
+                          {adoption.Pet?.image_path ? (
+                            <img
+                              src={`http://localhost:5000/uploads/${adoption.Pet.image_path}`}
+                              alt={adoption.Pet.name}
+                              className="adoption-pet-img"
+                              onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'inline-block'; }}
+                            />
+                          ) : (
+                            <span className="adoption-pet-img adoption-pet-img-placeholder">?</span>
+                          )}
+                          <span className="adoption-pet-img adoption-pet-img-placeholder" style={{ display: 'none' }}>?</span>
+                        </span>
+                        <span className="adoption-pet-name">{adoption.Pet?.name || 'Unknown'}</span>
+                      </span>
                     </td>
-                    <td>{adoption.status}</td>
-                    <td>{adoption.created_at ? formatDate(adoption.created_at) : ''}</td>
+                    <td>
+                      <span className={`adoption-status-label ${adoption.status}`}>{adoption.status}</span>
+                    </td>
+                    <td>
+                      {adoption.created_at ? formatDate(adoption.created_at) : ''}
+                    </td>
                     <td>
                       {adoption.status === 'pending' ? (
                         <>
@@ -205,9 +194,7 @@ export default function ManageAdoptions() {
                             Reject
                           </button>
                         </>
-                      ) : (
-                        <span className={`adoption-status-label ${adoption.status}`}>{adoption.status}</span>
-                      )}
+                      ) : null}
                     </td>
                   </tr>
                 ))

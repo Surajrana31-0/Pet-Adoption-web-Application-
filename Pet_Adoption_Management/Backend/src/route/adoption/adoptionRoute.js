@@ -7,9 +7,8 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.post('/', adoptionController.create);
-router.get('/', adoptionController.getAllForUser);
-router.get('/admin', requireAdmin, adoptionController.getAllForAdmin);
-router.patch('/:id/approve', requireAdmin, adoptionController.approve);
-router.patch('/:id/reject', requireAdmin, adoptionController.reject);
+router.get('/', adoptionController.getAll);
+router.put('/:id/approve', requireAdmin, adoptionController.approve);
+router.put('/:id/reject', requireAdmin, adoptionController.reject);
 
 export { router as adoptionRouter }; 

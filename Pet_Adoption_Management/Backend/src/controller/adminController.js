@@ -6,7 +6,8 @@ export const getAdminStats = async (req, res) => {
   try {
     const users = await User.count();
     const pets = await Pet.count();
-    const adoptions = await Adoption.count();
+    // Only count APPROVED adoptions
+    const adoptions = await Adoption.count({ where: { status: 'APPROVED' } });
     res.json({ users, pets, adoptions });
   } catch (err) {
     console.error("getAdminStats error:", err);

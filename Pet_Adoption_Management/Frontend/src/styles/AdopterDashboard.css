@@ -163,6 +163,75 @@
   gap: 1.5rem;
 }
 
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.favorite-card {
+  display: flex;
+  align-items: center;
+  background: #f2f4f7;
+  border-radius: 18px;
+  padding: 1.2rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  gap: 1.5rem;
+  position: relative;
+}
+
+.favorite-pet-image {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #e0e7ef;
+  border: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.favorite-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.favorite-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.favorite-info p {
+  margin: 0;
+  color: #555;
+  font-size: 1rem;
+}
+
+.pet-age {
+  color: #1976d2;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.remove-btn {
+  margin-left: auto;
+  background: #607d8b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6em 1.3em;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.remove-btn:hover {
+  background: #455a64;
+}
+
 .pets-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -512,6 +581,38 @@
   color: #888;
   margin: 2rem 0;
 }
+.favorite-search-container {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.favorite-search-input {
+  width: 260px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  padding: 0 1rem;
+  background: #fff;
+  transition: border 0.2s;
+}
+.favorite-search-input:focus {
+  border: 1.5px solid #1976d2;
+  outline: none;
+}
+
+@media (max-width: 600px) {
+  .favorite-search-input {
+    width: 100%;
+    margin-top: 0.7rem;
+  }
+  .favorite-search-container {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0.7rem;
+  }
+}
 @media (max-width: 900px) {
   .adopter-dashboard-root {
     flex-direction: column;
@@ -552,4 +653,34 @@
   .tab-content {
     padding: 1rem 0.5rem;
   }
+  .favorite-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 1rem;
+  }
+  .remove-btn {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 0.7rem;
+  }
+} 
+
+.adopt-error-message {
+  color: #b00020;
+  background: #ffeaea;
+  border-radius: 6px;
+  padding: 0.7em 1.2em;
+  margin: 1em 0 0.5em 0;
+  font-size: 1.05em;
+  font-weight: 500;
+  text-align: center;
+}
+
+.pet-unavailable-msg {
+  display: block;
+  color: #b00020;
+  font-size: 0.98em;
+  margin-top: 0.5em;
+  font-weight: 500;
 } 

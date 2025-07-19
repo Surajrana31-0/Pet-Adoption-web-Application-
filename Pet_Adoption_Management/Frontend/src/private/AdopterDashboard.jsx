@@ -31,6 +31,8 @@ const AdopterDashboard = () => {
   const [error, setError] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const [favoriteSearch, setFavoriteSearch] = useState("");
+  const [adoptError, setAdoptError] = useState("");
   const addToast = useToast();
 
   useEffect(() => {
@@ -132,10 +134,13 @@ const AdopterDashboard = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'pending':
+      case 'PENDING':
         return <Clock className="status-icon pending" />
       case 'approved':
+      case 'APPROVED':
         return <CheckCircle className="status-icon approved" />
       case 'rejected':
+      case 'REJECTED':
         return <Heart className="status-icon rejected" />
       default:
         return <Clock className="status-icon pending" />
@@ -145,10 +150,13 @@ const AdopterDashboard = () => {
   const getStatusText = (status) => {
     switch (status) {
       case 'pending':
+      case 'PENDING':
         return 'Under Review'
       case 'approved':
+      case 'APPROVED':
         return 'Approved'
       case 'rejected':
+      case 'REJECTED':
         return 'Not Selected'
       default:
         return 'Under Review'
@@ -161,6 +169,17 @@ const AdopterDashboard = () => {
   const filteredPets = Array.isArray(pets)
     ? pets.filter(pet => {
         const q = petSearch.toLowerCase();
+        return (
+          pet.name?.toLowerCase().includes(q) ||
+          pet.breed?.toLowerCase().includes(q) ||
+          pet.type?.toLowerCase().includes(q)
+        );
+      })
+    : [];
+
+  const filteredFavorites = Array.isArray(favorites)
+    ? favorites.filter(pet => {
+        const q = favoriteSearch.toLowerCase();
         return (
           pet.name?.toLowerCase().includes(q) ||
           pet.breed?.toLowerCase().includes(q) ||
@@ -194,25 +213,23 @@ const AdopterDashboard = () => {
           {applications.map(application => (
             <div key={application.id} className="application-card">
               <img 
-                src={getImageUrl(application.pet?.image_path) || `https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300`}
-                alt={application.pet?.name}
+                src={getImageUrl(application.Pet?.image_path)}
+                alt={application.Pet?.name}
                 className="application-pet-image"
-                onError={(e) => {
-                  e.target.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300';
-                }}
+                onError={e => { e.target.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'; }}
               />
               <div className="application-info">
-                <h3>{application.pet?.name}</h3>
-                <p>{application.pet?.breed} • {application.pet?.type}</p>
+                <h3>{application.Pet?.name}</h3>
+                <p>{application.Pet?.breed} • {application.Pet?.type}</p>
                 <div className="application-status">
                   {getStatusIcon(application.status)}
                   <span className={`status-text ${application.status}`}>{getStatusText(application.status)}</span>
                 </div>
                 <p className="application-date">Submitted: {new Date(application.created_at).toLocaleDateString()}</p>
-                {application.status === 'approved' && (
+                {application.status === 'APPROVED' && (
                   <div className="approval-message">
                     <CheckCircle className="approval-icon" />
-                    <span>Congratulations! Your application has been approved.</span>
+                    <span>{application.Pet?.name} is approved, you can further go for payment process</span>
                   </div>
                 )}
               </div>
@@ -227,10 +244,19 @@ const AdopterDashboard = () => {
     <div className="tab-content">
       <div className="tab-header-row">
         <h2>My Favorite Pets</h2>
+        <div className="favorite-search-container">
+          <input
+            type="text"
+            placeholder="Search favorites by name, breed, or type..."
+            value={favoriteSearch}
+            onChange={e => setFavoriteSearch(e.target.value)}
+            className="favorite-search-input"
+          />
+        </div>
       </div>
       {favoritesLoading ? (
         <div className="loading">Loading favorites...</div>
-      ) : favorites.length === 0 ? (
+      ) : filteredFavorites.length === 0 ? (
         <div className="empty-state">
           <Star className="empty-icon" />
           <h3>No Favorites Yet</h3>
@@ -238,22 +264,24 @@ const AdopterDashboard = () => {
         </div>
       ) : (
         <div className="favorites-list">
-          {favorites.map(pet => (
+          {filteredFavorites.map(pet => (
             <div key={pet.id} className="favorite-card">
               <img 
-                src={getImageUrl(pet.image_path) || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} 
-                alt={pet.name} 
+                src={getImageUrl(pet.image_path)}
+                alt={pet.name}
                 className="favorite-pet-image"
-                onError={(e) => {
+                onError={e => {
                   e.target.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300';
                 }}
               />
               <div className="favorite-info">
                 <h3>{pet.name}</h3>
                 <p>{pet.breed} • {pet.type}</p>
-                <p>{pet.age}</p>
-                <button className="btn-secondary" onClick={() => handleRemoveFavorite(pet.id)}>Remove</button>
+                <p className="pet-age">{pet.age} years old</p>
               </div>
+              <button className="btn-secondary remove-btn" onClick={() => handleRemoveFavorite(pet.id)}>
+                Remove
+              </button>
             </div>
           ))}
         </div>
@@ -275,6 +303,7 @@ const AdopterDashboard = () => {
           />
         </div>
       </div>
+      {adoptError && <div className="adopt-error-message">{adoptError}</div>}
       {petsLoading ? (
         <div className="loading">Loading pets...</div>
       ) : (
@@ -286,44 +315,57 @@ const AdopterDashboard = () => {
               <p>{pets.length === 0 ? 'No pets available at the moment.' : 'No pets match your search criteria.'}</p>
             </div>
           ) : (
-            filteredPets.map(pet => (
-              <div key={pet.id} className="pet-card">
-                <img 
-                  src={getImageUrl(pet.image_path) || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} 
-                  alt={pet.name} 
-                  className="pet-image" 
-                  onError={(e) => {
-                    e.target.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300';
-                  }}
-                />
-                <div className="pet-info">
-                  <h3>{pet.name}</h3>
-                  <p className="pet-breed">{pet.breed} • {pet.type}</p>
-                  <p className="pet-age">{pet.age} years old</p>
-                  <div className="pet-card-actions">
-                    <button 
-                      className="btn-secondary" 
-                      onClick={() => navigate(`/pet/${pet.id}`)}
-                    >
-                      Details
-                    </button>
-                    <button 
-                      className={`btn-secondary ${isPetInFavorites(pet.id) ? 'favorited' : ''}`}
-                      onClick={() => isPetInFavorites(pet.id) ? handleRemoveFavorite(pet.id) : handleAddToFavorites(pet.id)}
-                    >
-                      <Heart size={16} style={{ marginRight: '4px' }} />
-                      {isPetInFavorites(pet.id) ? 'Remove' : 'Favorite'}
-                    </button>
-                    <button 
-                      className="btn-primary" 
-                      onClick={() => navigate(`/adopt/${pet.id}`)}
-                    >
-                      Adopt
-                    </button>
+            filteredPets.map(pet => {
+              const unavailable = ["Adopted", "Pending"].includes(pet.status);
+              return (
+                <div key={pet.id} className="pet-card">
+                  <img 
+                    src={getImageUrl(pet.image_path)}
+                    alt={pet.name}
+                    className="pet-image" 
+                    onError={e => { e.target.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'; }}
+                  />
+                  <div className="pet-info">
+                    <h3>{pet.name}</h3>
+                    <p className="pet-breed">{pet.breed} • {pet.type}</p>
+                    <p className="pet-age">{pet.age} years old</p>
+                    <div className="pet-card-actions">
+                      <button 
+                        className="btn-secondary" 
+                        onClick={() => navigate(`/pet/${pet.id}`)}
+                      >
+                        Details
+                      </button>
+                      <button 
+                        className={`btn-secondary ${isPetInFavorites(pet.id) ? 'favorited' : ''}`}
+                        onClick={() => isPetInFavorites(pet.id) ? handleRemoveFavorite(pet.id) : handleAddToFavorites(pet.id)}
+                      >
+                        <Heart size={16} style={{ marginRight: '4px' }} />
+                        {isPetInFavorites(pet.id) ? 'Remove' : 'Favorite'}
+                      </button>
+                      <button 
+                        className="btn-primary" 
+                        onClick={async () => {
+                          setAdoptError("");
+                          if (unavailable) return;
+                          try {
+                            navigate(`/adopt/${pet.id}`);
+                          } catch (err) {
+                            setAdoptError("This pet is already adopted or pending adoption");
+                          }
+                        }}
+                        disabled={unavailable}
+                      >
+                        Adopt
+                      </button>
+                      {unavailable && (
+                        <span className="pet-unavailable-msg">Not available for adoption</span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
