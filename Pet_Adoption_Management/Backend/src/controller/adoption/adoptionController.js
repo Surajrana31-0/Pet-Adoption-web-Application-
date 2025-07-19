@@ -1,21 +1,71 @@
-import { Adoptions } from '../../models/adoption/Adoptions.js';
-import { AdoptBy } from '../../models/adoption/AdoptBy.js';
+import { Adoption } from '../../models/adoption/Adoption.js';
 import { Pet } from '../../models/pet/Pet.js';
 import { User } from '../../models/user/User.js';
-import { Op } from 'sequelize';
+import { validationResult } from 'express-validator';
 
 // POST /api/adoptions
 const create = async (req, res) => {
   try {
-    const { pet_id, user_id, full_name, address, phone, reason } = req.body;
-    // Insert adopter details
-    const adopter = await AdoptBy.create({ user_id, full_name, address, phone, reason });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      pet_id,
+      adopter_name,
+      adopter_email,
+      adopter_phone,
+      adopter_address,
+      adoption_reason,
+      experience_with_pets,
+      living_situation,
+      other_pets,
+      children,
+      work_schedule
+    } = req.body;
+
+    const user_id = req.user.id;
+
+    // Verify pet exists
+    const pet = await Pet.findByPk(pet_id);
+    if (!pet) {
+      return res.status(404).json({ message: 'Pet not found' });
+    }
+
+    // Check if user already has a pending adoption for this pet
+    const existingAdoption = await Adoption.findOne({
+      where: { user_id, pet_id, status: 'pending' }
+    });
+
+    if (existingAdoption) {
+      return res.status(400).json({ message: 'You already have a pending adoption request for this pet' });
+    }
+
     // Create adoption record
-    const adoption = await Adoptions.create({ pet_id, adopter_id: adopter.id, status: 'pending' });
-    res.status(201).json({ message: 'Adoption request submitted', adoption });
+    const adoption = await Adoption.create({
+      user_id,
+      pet_id,
+      adopter_name,
+      adopter_email,
+      adopter_phone,
+      adopter_address,
+      adoption_reason,
+      experience_with_pets,
+      living_situation,
+      other_pets,
+      children,
+      work_schedule,
+      status: 'pending'
+    });
+
+    res.status(201).json({ 
+      message: 'Adoption request submitted successfully', 
+      data: adoption 
+    });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ message: 'Failed to create adoption' });
+    console.error('Error creating adoption:', e);
+    res.status(500).json({ message: 'Failed to create adoption request' });
   }
 };
 
@@ -23,17 +73,19 @@ const create = async (req, res) => {
 const getAllForUser = async (req, res) => {
   try {
     const user_id = req.user.id;
-    // Find all adoptions where adopter.user_id = current user
-    const adoptions = await Adoptions.findAll({
+    const adoptions = await Adoption.findAll({
+      where: { user_id },
       include: [
-        { model: AdoptBy, where: { user_id } },
-        { model: Pet }
+        { 
+          model: Pet,
+          attributes: ['id', 'name', 'breed', 'type', 'age', 'image_path']
+        }
       ],
       order: [['created_at', 'DESC']]
     });
     res.status(200).json({ data: adoptions });
   } catch (e) {
-    console.error(e);
+    console.error('Error fetching user adoptions:', e);
     res.status(500).json({ message: 'Failed to fetch your adoption requests' });
   }
 };
@@ -41,16 +93,22 @@ const getAllForUser = async (req, res) => {
 // GET /api/adoptions/admin (admin only)
 const getAllForAdmin = async (req, res) => {
   try {
-    const adoptions = await Adoptions.findAll({
+    const adoptions = await Adoption.findAll({
       include: [
-        { model: AdoptBy },
-        { model: Pet },
+        { 
+          model: User,
+          attributes: ['id', 'username', 'email', 'first_name', 'last_name', 'image_path']
+        },
+        { 
+          model: Pet,
+          attributes: ['id', 'name', 'breed', 'type', 'age', 'image_path']
+        }
       ],
       order: [['created_at', 'DESC']]
     });
     res.status(200).json({ data: adoptions });
   } catch (e) {
-    console.error(e);
+    console.error('Error fetching admin adoptions:', e);
     res.status(500).json({ message: 'Failed to fetch adoptions' });
   }
 };
@@ -58,13 +116,20 @@ const getAllForAdmin = async (req, res) => {
 // PATCH /api/adoptions/:id/approve (admin only)
 const approve = async (req, res) => {
   try {
-    const adoption = await Adoptions.findByPk(req.params.id);
-    if (!adoption) return res.status(404).json({ message: 'Adoption not found' });
+    const adoption = await Adoption.findByPk(req.params.id);
+    if (!adoption) {
+      return res.status(404).json({ message: 'Adoption not found' });
+    }
+    
     adoption.status = 'approved';
     await adoption.save();
-    res.json({ message: 'Adoption approved', adoption });
+    
+    res.json({ 
+      message: 'Adoption approved successfully', 
+      data: adoption 
+    });
   } catch (e) {
-    console.error(e);
+    console.error('Error approving adoption:', e);
     res.status(500).json({ message: 'Failed to approve adoption' });
   }
 };
@@ -72,13 +137,20 @@ const approve = async (req, res) => {
 // PATCH /api/adoptions/:id/reject (admin only)
 const reject = async (req, res) => {
   try {
-    const adoption = await Adoptions.findByPk(req.params.id);
-    if (!adoption) return res.status(404).json({ message: 'Adoption not found' });
+    const adoption = await Adoption.findByPk(req.params.id);
+    if (!adoption) {
+      return res.status(404).json({ message: 'Adoption not found' });
+    }
+    
     adoption.status = 'rejected';
     await adoption.save();
-    res.json({ message: 'Adoption rejected', adoption });
+    
+    res.json({ 
+      message: 'Adoption rejected successfully', 
+      data: adoption 
+    });
   } catch (e) {
-    console.error(e);
+    console.error('Error rejecting adoption:', e);
     res.status(500).json({ message: 'Failed to reject adoption' });
   }
 };

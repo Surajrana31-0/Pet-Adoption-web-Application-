@@ -1,18 +1,34 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "/api";
+const BASE_URL = "http://localhost:5000";
 
 // Create an Axios instance
 const api = axios.create({
   baseURL: API_URL,
 });
 
+// Utility function to get image URL
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith('http')) return imagePath;
+  return `${BASE_URL}/uploads/${imagePath}`;
+};
+
 // Add a request interceptor to include the token
 api.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Skip authentication for public endpoints
+    const publicEndpoints = ['/pets', '/pets/'];
+    const isPublicEndpoint = publicEndpoints.some(endpoint => 
+      config.url.startsWith(endpoint) && config.method === 'get'
+    );
+    
+    if (!isPublicEndpoint) {
+      const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },

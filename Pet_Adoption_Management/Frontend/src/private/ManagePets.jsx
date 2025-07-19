@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/ManagePets.css';
 
 const API_URL = '/api/pets';
@@ -12,6 +13,7 @@ function debounce(fn, delay) {
 }
 
 export default function ManagePets() {
+  const navigate = useNavigate();
   const [pets, setPets] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -88,7 +90,10 @@ export default function ManagePets() {
           onChange={e => setSearch(e.target.value)}
           className="search-input"
         />
-        <button className="add-pet-btn" onClick={() => window.location.href = '/add-pet'}>Add Pet</button>
+        <button className="add-pet-btn" onClick={() => {
+          console.log('Add Pet button clicked, navigating to /add-pet');
+          navigate('/add-pet');
+        }}>Add Pet</button>
       </header>
       {loading ? (
         <div className="loading">Loading pets...</div>
@@ -117,13 +122,19 @@ export default function ManagePets() {
                     <td className="pet-img-cell">
                       {pet.image_path ? (
                         <img
-                          src={`http://localhost:5000/${pet.image_path.replace(/\\/g, '/')}`}
+                          src={`http://localhost:5000/uploads/${pet.image_path}`}
                           alt={pet.name}
                           className="pet-img"
+                          onError={(e) => {
+                            console.log('Image failed to load:', pet.image_path);
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'inline-block';
+                          }}
                         />
                       ) : (
                         <span className="pet-img pet-img-placeholder">?</span>
                       )}
+                      <span className="pet-img pet-img-placeholder" style={{ display: 'none' }}>?</span>
                     </td>
                     <td>{pet.name}</td>
                     <td>{pet.breed}</td>

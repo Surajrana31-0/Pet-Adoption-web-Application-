@@ -37,6 +37,7 @@ export default function ManageAdoptions() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Could not load adoptions');
+      console.log('Adoptions data received:', data.data);
       setAdoptions(Array.isArray(data.data) ? data.data : []);
       setFiltered(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
@@ -60,10 +61,11 @@ export default function ManageAdoptions() {
       }
       const lower = term.toLowerCase();
       setFiltered(
-        adoptions.filter(a =>
-          (a.AdoptBy && a.AdoptBy.full_name && a.AdoptBy.full_name.toLowerCase().includes(lower)) ||
-          (a.Pet && a.Pet.name && a.Pet.name.toLowerCase().includes(lower))
-        )
+        adoptions.filter(a => {
+          const userName = a.User ? `${a.User.first_name || ''} ${a.User.last_name || ''}`.toLowerCase() : '';
+          const petName = a.Pet ? a.Pet.name.toLowerCase() : '';
+          return userName.includes(lower) || petName.includes(lower);
+        })
       );
     }, 350);
     debounced(search);
@@ -128,20 +130,31 @@ export default function ManageAdoptions() {
                 filtered.map(adoption => (
                   <tr key={adoption.id}>
                     <td className="adoption-applicant-cell">
-                      {adoption.AdoptBy && adoption.AdoptBy.full_name ? (
+                      {adoption.User ? (
                         <>
                           <span className="adoption-user-img-wrapper">
-                            {adoption.AdoptBy.image_path ? (
+                            {adoption.User.image_path ? (
                               <img
-                                src={`http://localhost:5000/${adoption.AdoptBy.image_path.replace(/\\/g, '/')}`}
-                                alt={adoption.AdoptBy.full_name}
+                                src={`http://localhost:5000/uploads/${adoption.User.image_path}`}
+                                alt={`${adoption.User.first_name || ''} ${adoption.User.last_name || ''}`}
                                 className="adoption-user-img"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'inline-block';
+                                }}
                               />
                             ) : (
-                              <span className="adoption-user-img adoption-user-img-placeholder">{adoption.AdoptBy.full_name[0].toUpperCase()}</span>
+                              <span className="adoption-user-img adoption-user-img-placeholder">
+                                {(adoption.User.first_name || 'U')[0].toUpperCase()}
+                              </span>
                             )}
+                            <span className="adoption-user-img adoption-user-img-placeholder" style={{ display: 'none' }}>
+                              {(adoption.User.first_name || 'U')[0].toUpperCase()}
+                            </span>
                           </span>
-                          <span className="adoption-user-name">{adoption.AdoptBy.full_name}</span>
+                          <span className="adoption-user-name">
+                            {adoption.User.first_name || 'Unknown'} {adoption.User.last_name || ''}
+                          </span>
                         </>
                       ) : (
                         <span className="adoption-user-name">Unknown</span>
@@ -153,13 +166,18 @@ export default function ManageAdoptions() {
                           <span className="adoption-pet-img-wrapper">
                             {adoption.Pet.image_path ? (
                               <img
-                                src={`http://localhost:5000/${adoption.Pet.image_path.replace(/\\/g, '/')}`}
+                                src={`http://localhost:5000/uploads/${adoption.Pet.image_path}`}
                                 alt={adoption.Pet.name}
                                 className="adoption-pet-img"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'inline-block';
+                                }}
                               />
                             ) : (
                               <span className="adoption-pet-img adoption-pet-img-placeholder">?</span>
                             )}
+                            <span className="adoption-pet-img adoption-pet-img-placeholder" style={{ display: 'none' }}>?</span>
                           </span>
                           <span className="adoption-pet-name">{adoption.Pet.name}</span>
                         </>

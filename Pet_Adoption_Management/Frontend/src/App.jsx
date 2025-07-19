@@ -19,6 +19,8 @@ import Profile from "./private/Profile.jsx";
 import ProfileEdit from "./private/ProfileEdit.jsx";
 import ManagePets from './private/ManagePets';
 import AddPet from './components/admin/AddPet';
+import PetDescription from './private/PetDescription.jsx';
+import AdoptMe from './private/AdoptMe.jsx';
 import { ToastProvider } from "./components/ToastContext";
 
 // Generalized ProtectedRoute
@@ -69,8 +71,10 @@ function App() {
         <Route path="/applications" element={<ProtectedRoute requiredRole="user"><div>My Applications Page</div></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute requiredRole="user"><Profile /></ProtectedRoute>} />
         <Route path="/profile/edit" element={<ProtectedRoute requiredRole="user"><ProfileEdit /></ProtectedRoute>} />
-        <Route path="/dashboard" element={<ManagePets />} />
-        <Route path="/add-pet" element={<AddPet />} />
+        <Route path="/pet/:id" element={<ProtectedRoute requiredRole="user"><PetDescription /></ProtectedRoute>} />
+        <Route path="/adopt/:id" element={<ProtectedRoute requiredRole="user"><AdoptMe /></ProtectedRoute>} />
+        <Route path="/manage-pets" element={<ProtectedRoute requiredRole="admin"><ManagePets /></ProtectedRoute>} />
+        <Route path="/add-pet" element={<ProtectedRoute requiredRole="admin"><AddPet /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />

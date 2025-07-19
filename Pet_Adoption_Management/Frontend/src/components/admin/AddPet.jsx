@@ -17,6 +17,7 @@ const typeOptions = ['Dog', 'Cat', 'Other'];
 const statusOptions = ['Available', 'Adopted', 'Pending'];
 
 export default function AddPet() {
+  console.log('AddPet component rendered');
   const [form, setForm] = useState(initialState);
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -72,7 +73,7 @@ export default function AddPet() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || (data.errors && data.errors[0]?.msg) || 'Failed to add pet');
       toast.success('Pet added successfully!');
-      setTimeout(() => navigate('/dashboard'), 1200);
+      setTimeout(() => navigate('/admin'), 1200);
     } catch (err) {
       setError(err.message);
       toast.error(err.message);
@@ -109,7 +110,7 @@ export default function AddPet() {
         {error && <div className="form-error">{error}</div>}
         <div className="form-actions">
           <button type="submit" disabled={loading}>{loading ? 'Adding...' : 'Add Pet'}</button>
-          <button type="button" className="cancel-btn" onClick={() => navigate('/dashboard')}>Cancel</button>
+          <button type="button" className="cancel-btn" onClick={() => navigate('/admin')}>Cancel</button>
         </div>
       </form>
     </div>

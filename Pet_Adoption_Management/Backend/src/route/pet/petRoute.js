@@ -6,11 +6,10 @@ import { body } from 'express-validator';
 
 const router = express.Router();
 
-router.use(requireAuth);
-
 router.get('/', petController.getAll);
 router.post(
   '/',
+  requireAuth,
   requireAdmin,
   upload.single('image'),
   [
@@ -25,6 +24,7 @@ router.post(
 router.get('/:id', petController.getById);
 router.put(
   '/:id',
+  requireAuth,
   requireAdmin,
   upload.single('image'),
   [
@@ -36,6 +36,6 @@ router.put(
   ],
   petController.update
 );
-router.delete('/:id', requireAdmin, petController.deleteById);
+router.delete('/:id', requireAuth, requireAdmin, petController.deleteById);
 
 export { router as petRouter }; 

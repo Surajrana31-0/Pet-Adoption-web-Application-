@@ -1,47 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Heart, Clock, CheckCircle, User, Mail, Phone, LogOut, Settings as SettingsIcon, Star, Edit2, PawPrint } from 'lucide-react'
+import { Heart, Clock, CheckCircle, User, LogOut, Settings as SettingsIcon, Star, Edit2, PawPrint } from 'lucide-react'
 import { AuthContext } from '../AuthContext.jsx'
-import { adoptionAPI } from '../utils/api'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import '../styles/AdopterDashboard.css'
-import Modal from "../components/DialogueBox"
-import { petAPI } from '../utils/api'
-import AdoptionForm from "./AdoptionForm.jsx";
-import api from "../services/api";
+import api, { getImageUrl } from "../services/api";
+import { useToast } from '../components/ToastContext';
 
-// Dummy/mock data for applications and favorites
-const mockApplications = [
-  {
-    id: 1,
-    pet: { name: 'Bella', breed: 'Labrador', image_url: '', type: 'Dog' },
-    status: 'pending',
-    created_at: '2024-05-01T10:00:00Z',
-  },
-  {
-    id: 2,
-    pet: { name: 'Milo', breed: 'Tabby', image_url: '', type: 'Cat' },
-    status: 'approved',
-    created_at: '2024-04-15T14:30:00Z',
-  },
-];
-const mockFavorites = [
-  {
-    id: 1,
-    name: 'Charlie',
-    breed: 'Golden Retriever',
-    image_url: '',
-    type: 'Dog',
-    age: '2 years',
-  },
-  {
-    id: 2,
-    name: 'Luna',
-    breed: 'Siamese',
-    image_url: '',
-    type: 'Cat',
-    age: '1 year',
-  },
-];
+
 
 const TABS = [
   { key: 'applications', label: 'My Applications', icon: <PawPrint size={18} /> },
@@ -56,7 +21,7 @@ const AdopterDashboard = () => {
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
-  const [showBrowsePets, setShowBrowsePets] = useState(false)
+  const location = useLocation()
   const [pets, setPets] = useState([])
   const [petSearch, setPetSearch] = useState('')
   const [petsLoading, setPetsLoading] = useState(false)
@@ -64,27 +29,34 @@ const AdopterDashboard = () => {
   const [profile, setProfile] = useState({ name: user?.name || '', email: user?.email || '' })
   const [editing, setEditing] = useState(false)
   const [error, setError] = useState(null);
-  const [showAdoptionForm, setShowAdoptionForm] = useState(false);
-  const [selectedPet, setSelectedPet] = useState(null);
-  const [showPetDescription, setShowPetDescription] = useState(false);
-  const [petDescription, setPetDescription] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const addToast = useToast();
 
   useEffect(() => {
     fetchApplications();
   }, []);
 
+  // Handle tab parameter from URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const tabParam = urlParams.get('tab');
+    if (tabParam && ['applications', 'favorites', 'viewPets', 'profile', 'settings'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [location.search]);
+
   // Fetch pets when 'View Pets' tab is active
   useEffect(() => {
     if (activeTab === 'viewPets') {
       setPetsLoading(true);
-      petAPI.getAllPets().then(res => {
-        // Accept both array and object with data property
-        const petList = Array.isArray(res) ? res : (Array.isArray(res.data) ? res.data : res.data?.data || []);
-        setPets(petList);
+      api.get('/pets').then(res => {
+        setPets(res.data.data || []);
         setPetsLoading(false);
-      }).catch(() => setPetsLoading(false));
+      }).catch((error) => {
+        console.error('Error fetching pets:', error);
+        setPetsLoading(false);
+      });
     }
   }, [activeTab]);
 
@@ -115,14 +87,25 @@ const AdopterDashboard = () => {
     }
   };
 
+  // Check if pet is in favorites
+  const isPetInFavorites = (petId) => {
+    return favorites.some(fav => fav.pet_id === petId || fav.id === petId);
+  };
+
   // Add to favorites handler
   const handleAddToFavorites = async (petId) => {
     try {
       await api.post(`/favorites/${petId}`);
+      addToast('Pet added to favorites successfully!', 'success');
       // Refresh favorites list
       fetchFavorites();
     } catch (error) {
       console.error('Failed to add to favorites:', error);
+      if (error.response?.status === 409) {
+        addToast('This pet is already in your favorites!', 'warning');
+      } else {
+        addToast('Failed to add pet to favorites. Please try again.', 'error');
+      }
     }
   };
 
@@ -130,10 +113,12 @@ const AdopterDashboard = () => {
   const handleRemoveFavorite = async (petId) => {
     try {
       await api.delete(`/favorites/${petId}`);
+      addToast('Pet removed from favorites successfully!', 'success');
       // Refresh favorites list
       fetchFavorites();
     } catch (error) {
       console.error('Failed to remove from favorites:', error);
+      addToast('Failed to remove pet from favorites. Please try again.', 'error');
     }
   };
 
@@ -170,20 +155,7 @@ const AdopterDashboard = () => {
     }
   }
 
-  const openBrowsePets = async () => {
-    setShowBrowsePets(true);
-    setPetsLoading(true);
-    try {
-      const data = await petAPI.getAllPets();
-      // Defensive: handle array or object with data property
-      const petList = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
-      setPets(petList);
-    } catch (e) {
-      setPets([]); // Always set to an array on error
-    } finally {
-      setPetsLoading(false);
-    }
-  };
+
 
   // Defensive filtering
   const filteredPets = Array.isArray(pets)
@@ -208,7 +180,6 @@ const AdopterDashboard = () => {
     <div className="tab-content">
       <div className="tab-header-row">
         <h2>My Adoption Applications</h2>
-        <button className="btn-primary" onClick={openBrowsePets}>Browse Pets</button>
       </div>
       {error ? (
         <div className="error-message">{error}</div>
@@ -223,9 +194,12 @@ const AdopterDashboard = () => {
           {applications.map(application => (
             <div key={application.id} className="application-card">
               <img 
-                src={application.pet?.image_url || `https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300`}
+                src={getImageUrl(application.pet?.image_path) || `https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300`}
                 alt={application.pet?.name}
                 className="application-pet-image"
+                onError={(e) => {
+                  e.target.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300';
+                }}
               />
               <div className="application-info">
                 <h3>{application.pet?.name}</h3>
@@ -266,7 +240,14 @@ const AdopterDashboard = () => {
         <div className="favorites-list">
           {favorites.map(pet => (
             <div key={pet.id} className="favorite-card">
-              <img src={pet.image_url || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} alt={pet.name} className="favorite-pet-image" />
+              <img 
+                src={getImageUrl(pet.image_path) || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} 
+                alt={pet.name} 
+                className="favorite-pet-image"
+                onError={(e) => {
+                  e.target.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300';
+                }}
+              />
               <div className="favorite-info">
                 <h3>{pet.name}</h3>
                 <p>{pet.breed} • {pet.type}</p>
@@ -284,53 +265,67 @@ const AdopterDashboard = () => {
     <div className="tab-content">
       <div className="tab-header-row">
         <h2>Available Pets for Adoption</h2>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search pets by name, breed, or type..."
+            value={petSearch}
+            onChange={(e) => setPetSearch(e.target.value)}
+            className="pet-search-input"
+          />
+        </div>
       </div>
       {petsLoading ? (
         <div className="loading">Loading pets...</div>
       ) : (
         <div className="pets-grid">
-          {pets.length === 0 ? (
-            <div className="no-pets">No pets available.</div>
+          {filteredPets.length === 0 ? (
+            <div className="no-pets">
+              <Heart className="empty-icon" />
+              <h3>No pets found</h3>
+              <p>{pets.length === 0 ? 'No pets available at the moment.' : 'No pets match your search criteria.'}</p>
+            </div>
           ) : (
-            pets.map(pet => (
+            filteredPets.map(pet => (
               <div key={pet.id} className="pet-card">
-                <img src={pet.image_url || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} alt={pet.name} className="pet-image" />
+                <img 
+                  src={getImageUrl(pet.image_path) || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} 
+                  alt={pet.name} 
+                  className="pet-image" 
+                  onError={(e) => {
+                    e.target.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300';
+                  }}
+                />
                 <div className="pet-info">
                   <h3>{pet.name}</h3>
-                  <p>{pet.breed} • {pet.type}</p>
-                  <p>{pet.age}</p>
+                  <p className="pet-breed">{pet.breed} • {pet.type}</p>
+                  <p className="pet-age">{pet.age} years old</p>
                   <div className="pet-card-actions">
-                    <button className="btn-secondary" onClick={() => { setPetDescription(pet); setShowPetDescription(true); }}>Description</button>
-                    <button className="btn-secondary" onClick={() => handleAddToFavorites(pet.id)}>Add to Favorites</button>
-                    <button className="btn-primary" onClick={() => { setSelectedPet(pet); setShowAdoptionForm(true); }}>Adopt</button>
+                    <button 
+                      className="btn-secondary" 
+                      onClick={() => navigate(`/pet/${pet.id}`)}
+                    >
+                      Details
+                    </button>
+                    <button 
+                      className={`btn-secondary ${isPetInFavorites(pet.id) ? 'favorited' : ''}`}
+                      onClick={() => isPetInFavorites(pet.id) ? handleRemoveFavorite(pet.id) : handleAddToFavorites(pet.id)}
+                    >
+                      <Heart size={16} style={{ marginRight: '4px' }} />
+                      {isPetInFavorites(pet.id) ? 'Remove' : 'Favorite'}
+                    </button>
+                    <button 
+                      className="btn-primary" 
+                      onClick={() => navigate(`/adopt/${pet.id}`)}
+                    >
+                      Adopt
+                    </button>
                   </div>
                 </div>
               </div>
             ))
           )}
         </div>
-      )}
-      {/* Pet Description Modal */}
-      {showPetDescription && petDescription && (
-        <Modal onClose={() => setShowPetDescription(false)}>
-          <div className="pet-description-modal">
-            <h2>{petDescription.name}</h2>
-            <img src={petDescription.image_url || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} alt={petDescription.name} className="pet-image-modal" />
-            <p><strong>Breed:</strong> {petDescription.breed}</p>
-            <p><strong>Type:</strong> {petDescription.type}</p>
-            <p><strong>Age:</strong> {petDescription.age}</p>
-            <p><strong>Description:</strong> {petDescription.description}</p>
-            <button className="btn-primary" onClick={() => setShowPetDescription(false)}>Close</button>
-          </div>
-        </Modal>
-      )}
-      {/* Adoption Form Modal */}
-      {showAdoptionForm && selectedPet && (
-        <AdoptionForm
-          pet={selectedPet}
-          onClose={() => setShowAdoptionForm(false)}
-          onSuccess={() => { setShowAdoptionForm(false); fetchApplications(); }}
-        />
       )}
     </div>
   );
@@ -417,42 +412,7 @@ const AdopterDashboard = () => {
         {activeTab === 'profile' && renderProfile()}
         {activeTab === 'settings' && renderSettings()}
       </main>
-      {/* Browse Pets Modal */}
-      {showBrowsePets && (
-        <Modal onClose={() => setShowBrowsePets(false)}>
-          <div className="browse-pets-modal">
-            <h2>Browse Pets</h2>
-            <input
-              type="text"
-              placeholder="Search by name, breed, or type..."
-              value={petSearch}
-              onChange={e => setPetSearch(e.target.value)}
-              className="pet-search-input"
-            />
-            {petsLoading ? (
-              <div className="loading">Loading pets...</div>
-            ) : (
-              <div className="pets-grid-modal">
-                {filteredPets.length === 0 ? (
-                  <div className="no-pets">No pets found.</div>
-                ) : (
-                  filteredPets.map(pet => (
-                    <div key={pet.id} className="pet-card-modal">
-                      <img src={pet.image || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'} alt={pet.name} className="pet-image-modal" />
-                      <div className="pet-info-modal">
-                        <h3>{pet.name}</h3>
-                        <p>{pet.breed} • {pet.type}</p>
-                        <p>{pet.age}</p>
-                        <p className="pet-desc-modal">{pet.description}</p>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-        </Modal>
-      )}
+
     </div>
   )
 }

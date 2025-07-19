@@ -27,7 +27,7 @@ const create = async (req, res) => {
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
   try {
     const { name, breed, type, age, description, status } = req.body;
-    const image_path = req.file ? req.file.path : null;
+    const image_path = req.file ? req.file.filename : null;
     const pet = await Pet.create({
       name,
       breed,
@@ -53,10 +53,10 @@ const update = async (req, res) => {
     let image_path = pet.image_path;
     if (req.file) {
       // Delete old image if exists
-      if (image_path && fs.existsSync(image_path)) {
-        fs.unlinkSync(image_path);
+      if (image_path && fs.existsSync(path.join('uploads', image_path))) {
+        fs.unlinkSync(path.join('uploads', image_path));
       }
-      image_path = req.file.path;
+      image_path = req.file.filename;
     }
     await pet.update({ name, breed, type, age, description, status, image_path });
     res.status(200).json({ data: pet });
@@ -70,8 +70,8 @@ const deleteById = async (req, res) => {
     const pet = await Pet.findByPk(req.params.id);
     if (!pet) return res.status(404).json({ message: 'Pet not found' });
     // Delete image file if exists
-    if (pet.image_path && fs.existsSync(pet.image_path)) {
-      fs.unlinkSync(pet.image_path);
+    if (pet.image_path && fs.existsSync(path.join('uploads', pet.image_path))) {
+      fs.unlinkSync(path.join('uploads', pet.image_path));
     }
     await pet.destroy();
     res.status(200).json({ message: 'Pet deleted successfully' });

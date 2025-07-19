@@ -166,12 +166,7 @@ export const petAPI = {
   // Get all pets
   getAllPets: async () => {
     try {
-      const res = await fetch(`/api/pets`, {
-        headers: {
-          ...getAuthHeaders(),
-        },
-      });
-      handleAuthError(res);
+      const res = await fetch(`/api/pets`);
       if (!res.ok) throw new Error('Failed to fetch pets');
       return await res.json();
     } catch (err) {
