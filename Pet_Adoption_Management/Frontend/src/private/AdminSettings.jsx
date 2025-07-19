@@ -3,6 +3,7 @@ import EditProfile from "./EditProfile";
 import "../styles/AdminSettings.css";
 import { AuthContext } from "../AuthContext";
 
+
 const AdminSettings = () => {
   const { token } = useContext(AuthContext);
   const [admin, setAdmin] = useState(null);

@@ -1,14 +1,15 @@
 import express from 'express'
-import { userController } from '../../controller/index.js';
+import { getAll, update, deleteById, getById, getMe, updateMe } from '../../controller/user/userController.js';
 import { requireAuth, requireAdmin } from '../../middleware/auth-middleware.js';
-import { getMe, updateMe } from '../../controller/user/userController.js';
 import upload from '../../middleware/multerConfig.js';
 import { body } from 'express-validator';
 const router=express.Router();
 
+console.log("userRouter loaded");
+
 router.use(requireAuth);
 
-router.get("/", requireAdmin, userController.getAll);
+router.get("/", requireAdmin, getAll);
 // PATCH with image upload and validation
 router.patch(
   "/:id",
@@ -17,10 +18,10 @@ router.patch(
   [
     body('role').optional().isIn(['user', 'admin']).withMessage('Role must be user or admin'),
   ],
-  userController.update
+  update
 );
-router.get("/:id", userController.getById);
-router.delete("/:id", requireAdmin, userController.delelteById);
+router.get("/:id", getById);
+router.delete("/:id", requireAdmin, deleteById);
 router.get('/me', getMe);
 router.put('/me',
   upload.single('image'),

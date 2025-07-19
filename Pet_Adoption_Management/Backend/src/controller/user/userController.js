@@ -73,7 +73,7 @@ const update = async (req, res) => {
 /**
  *  delete user (and image)
  */
-const delelteById = async (req, res) => {
+const deleteById = async (req, res) => {
     try {
         const { id = null } = req.params;
         const oldUser = await User.findOne({ where: { id } })
@@ -108,24 +108,42 @@ const getById = async (req, res) => {
 }
 
 // Get current user info
-export const getMe = async (req, res) => {
+const getMe = async (req, res) => {
+  console.log("=== ENTERED getMe CONTROLLER ===");
   console.log("getMe called, req.user:", req.user);
   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
   try {
     const userId = req.user.id;
+    console.log("Looking up user by id:", userId);
     const user = await User.findByPk(userId, {
       attributes: { exclude: ["password"] }
     });
+    console.log("User found:", user);
     if (!user) return res.status(404).json({ message: "User not found" });
-    res.json(user);
+    const userData = user.toJSON();
+    console.log("userData from toJSON:", userData);
+    const response = {
+      id: userData.id,
+      username: userData.username, // Added username
+      first_name: userData.firstName ?? userData.first_name ?? "",
+      last_name: userData.lastName ?? userData.last_name ?? "",
+      email: userData.email,
+      phone: userData.phone ?? userData.phone_number ?? "",
+      location: userData.location ?? "",
+      address: userData.address ?? "",
+      image_path: userData.image_path ?? "",
+      role: userData.role,
+      created_at: userData.created_at,
+    };
+    res.json(response);
   } catch (err) {
     console.error("getMe error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: err.message, stack: err.stack });
   }
 };
 
 // Update current user info
-export const updateMe = async (req, res) => {
+const updateMe = async (req, res) => {
   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
   try {
     const userId = req.user.id;
@@ -164,9 +182,4 @@ export const updateMe = async (req, res) => {
 };
 
 
-export const userController = {
-    getAll,
-    getById,
-    delelteById,
-    update
-};
+export { getAll, getById, deleteById, update, getMe, updateMe };

@@ -6,6 +6,10 @@ import './models/index.js'; // Ensure all models are registered before sync
 import {userRouter, adoptionRouter, favoriteRouter, authRouter, petRouter, adminRouter} from './route/index.js'
 import dotenv from 'dotenv'
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
 dotenv.config();
 
 

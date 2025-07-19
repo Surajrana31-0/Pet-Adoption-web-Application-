@@ -32,8 +32,14 @@ const AdminDashboard = () => {
     try {
       const payload = jwtDecode(storedToken);
       if (payload.role !== "admin") return navigate("/");
-      setAdmin({ name: payload.name, email: payload.email });
       setToken(storedToken);
+      // Fetch full admin data from backend
+      fetch("/api/users/me", {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      })
+        .then(res => res.ok ? res.json() : Promise.reject("Failed to fetch admin details"))
+        .then(data => setAdmin(data))
+        .catch(() => setAdmin(null));
     } catch {
       navigate("/");
     }

@@ -48,17 +48,19 @@
   align-items: center;
   gap: 0.5rem;
 }
-.profile-pic-placeholder {
-  width: 60px;
-  height: 60px;
+.profile-pic-circular, .profile-pic-placeholder-circular {
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  background: var(--admin-sidebar-active);
+  object-fit: cover;
+  background: #eee;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: var(--admin-primary);
-  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #888;
+  margin: 0 auto 0.5rem auto;
 }
 .admin-name {
   font-weight: 700;
@@ -293,6 +295,13 @@
 }
 .delete-btn:hover {
   background: #b71c1c;
+}
+.admin-username {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-weight: 400;
 }
 @media (max-width: 900px) {
   .admin-dashboard-root {

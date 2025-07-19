@@ -10,9 +10,19 @@ const AdminSidebar = ({ open, setOpen, activeTab, setActiveTab, admin, onLogout,
     {open && (
       <>
         <div className="admin-profile">
-          <div className="profile-pic-placeholder" />
-          <div className="admin-name">{admin?.name || "Admin"}</div>
-          <div className="admin-email">{admin?.email || "admin@example.com"}</div>
+          {admin?.image_path ? (
+            <img
+              src={admin.image_path}
+              alt={admin?.username || "Profile"}
+              className="profile-pic-circular"
+            />
+          ) : (
+            <div className="profile-pic-placeholder-circular">
+              {admin?.username ? admin.username.charAt(0).toUpperCase() : "A"}
+            </div>
+          )}
+          <div className="admin-name">Admin</div>
+          <div className="admin-username">{admin?.username || "admin"}</div>
         </div>
         <nav className="admin-nav">
           {tabs.map(tab => (

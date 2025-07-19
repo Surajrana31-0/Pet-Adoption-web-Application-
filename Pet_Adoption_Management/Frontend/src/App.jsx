@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "./AuthContext.jsx";
 import Home from "./public/Home.jsx";
 import About from "./public/About.jsx";
@@ -8,6 +8,7 @@ import Login from "./public/Login.jsx";
 import Signup from "./public/Signup.jsx";
 import Footer from "./public/Footer.jsx";
 import Header from "./public/Header.jsx";
+import EmptyHeader from "./components/EmptyHeader.jsx";
 import AdminDashboard from "./private/AdminDashboard.jsx";
 import AdopterDashboard from "./private/AdopterDashboard.jsx";
 import AdminRouteGuard from "./components/AdminRouteGuard.jsx";
@@ -30,15 +31,15 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
 function App() {
   const { isAuthenticated, role } = useContext(AuthContext);
+  const location = useLocation();
 
   // Helper to determine if current route is private
-  // We'll use window.location.pathname for simplicity
   const privateRoutes = ["/dashboard", "/admin", "/applications", "/profile"];
-  const isPrivateRoute = privateRoutes.some((route) => window.location.pathname.startsWith(route));
+  const isPrivateRoute = privateRoutes.some((route) => location.pathname.startsWith(route));
 
   return (
     <ToastProvider>
-      {isAuthenticated && isPrivateRoute ? <NavigationBar /> : <Header />}
+      {isAuthenticated && isPrivateRoute ? <EmptyHeader /> : <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
