@@ -523,11 +523,118 @@
   border: 1px solid #ccc;
   font-size: 1rem;
 }
-.settings-placeholder {
+/* Settings Section */
+.settings-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 2rem;
+}
+
+.settings-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 3rem;
   text-align: center;
-  color: #888;
-  margin-top: 2rem;
-  font-size: 1.1rem;
+  max-width: 400px;
+  width: 100%;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.settings-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: #007bff;
+}
+
+.settings-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.settings-card p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+.edit-profile-btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.edit-profile-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+}
+
+.edit-profile-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Settings */
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 1rem;
+  }
+  
+  .settings-card {
+    padding: 2rem;
+    margin: 1rem;
+  }
+  
+  .settings-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  .settings-card p {
+    font-size: 0.9rem;
+  }
+  
+  .edit-profile-btn {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-card {
+    padding: 1.5rem;
+  }
+  
+  .settings-icon {
+    margin-bottom: 1rem;
+  }
+  
+  .settings-card h3 {
+    font-size: 1.2rem;
+  }
+  
+  .edit-profile-btn {
+    width: 100%;
+    padding: 1rem;
+  }
 }
 /* Modal styles */
 .browse-pets-modal {

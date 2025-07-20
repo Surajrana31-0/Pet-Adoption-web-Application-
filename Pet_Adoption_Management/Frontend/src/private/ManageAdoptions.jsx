@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { getImageUrl } from '../services/api';
 import '../styles/ManageAdoptions.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -37,6 +38,9 @@ export default function ManageAdoptions() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Could not load adoptions');
+      
+
+      
       setAdoptions(Array.isArray(data.data) ? data.data : []);
       setFiltered(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
@@ -61,7 +65,7 @@ export default function ManageAdoptions() {
       const lower = term.toLowerCase();
       setFiltered(
         adoptions.filter(a => {
-          const userName = a.User ? `${a.User.first_name || ''} ${a.User.last_name || ''}`.toLowerCase() : '';
+          const userName = a.User ? `${a.User.firstName || ''} ${a.User.lastName || ''}`.toLowerCase() : '';
           const petName = a.Pet ? a.Pet.name.toLowerCase() : '';
           return userName.includes(lower) || petName.includes(lower);
         })
@@ -133,22 +137,22 @@ export default function ManageAdoptions() {
                         <span className="adoption-user-img-wrapper">
                           {adoption.User?.image_path ? (
                             <img
-                              src={`http://localhost:5000/uploads/${adoption.User.image_path}`}
-                              alt={`${adoption.User.first_name || ''} ${adoption.User.last_name || ''}`}
+                              src={getImageUrl(adoption.User.image_path)}
+                              alt={`${adoption.User.firstName || ''} ${adoption.User.lastName || ''}`}
                               className="adoption-user-img"
                               onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'inline-block'; }}
                             />
                           ) : (
                             <span className="adoption-user-img adoption-user-img-placeholder">
-                              {(adoption.User?.first_name || 'U')[0].toUpperCase()}
+                              {(adoption.User?.firstName || 'U')[0].toUpperCase()}
                             </span>
                           )}
                           <span className="adoption-user-img adoption-user-img-placeholder" style={{ display: 'none' }}>
-                            {(adoption.User?.first_name || 'U')[0].toUpperCase()}
+                            {(adoption.User?.firstName || 'U')[0].toUpperCase()}
                           </span>
                         </span>
                         <span className="adoption-user-name">
-                          {adoption.User ? `${adoption.User.first_name} ${adoption.User.last_name}` : 'Unknown'}
+                          {adoption.User ? `${adoption.User.firstName} ${adoption.User.lastName}` : 'Unknown'}
                         </span>
                       </span>
                     </td>
@@ -157,7 +161,7 @@ export default function ManageAdoptions() {
                         <span className="adoption-pet-img-wrapper">
                           {adoption.Pet?.image_path ? (
                             <img
-                              src={`http://localhost:5000/uploads/${adoption.Pet.image_path}`}
+                              src={getImageUrl(adoption.Pet.image_path)}
                               alt={adoption.Pet.name}
                               className="adoption-pet-img"
                               onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'inline-block'; }}

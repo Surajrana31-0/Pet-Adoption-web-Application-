@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Edit2 } from 'lucide-react';
 import { AuthContext } from '../AuthContext.jsx';
 import api, { getImageUrl } from '../services/api';
 import '../styles/MyProfile.css';
 
 const MyProfile = () => {
   const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [adoptedPets, setAdoptedPets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +45,14 @@ const MyProfile = () => {
               className="profile-pic"
               onError={e => { e.target.src = '/default-user.png'; }}
             />
-            {/* Future: Upload button here */}
+            <button 
+              className="edit-profile-button"
+              onClick={() => navigate('/dashboard?tab=settings')}
+              title="Edit Profile"
+            >
+              <Edit2 size={16} />
+              <span>Edit Profile</span>
+            </button>
           </div>
         </div>
         <div className="profile-details-section">

@@ -10,6 +10,8 @@ console.log("userRouter loaded");
 router.use(requireAuth);
 
 router.get("/", requireAdmin, getAll);
+router.get('/me', getMe);
+router.get('/profile', getProfile);
 // PATCH with image upload and validation
 router.patch(
   "/:id",
@@ -22,17 +24,17 @@ router.patch(
 );
 router.get("/:id", getById);
 router.delete("/:id", requireAdmin, deleteById);
-router.get('/me', getMe);
 router.put('/me',
   upload.single('image'),
   [
-    body('firstName').notEmpty().withMessage('First name is required'),
-    body('lastName').notEmpty().withMessage('Last name is required'),
+    body('firstName').optional().notEmpty().withMessage('First name is required'),
+    body('lastName').optional().notEmpty().withMessage('Last name is required'),
+    body('first_name').optional().notEmpty().withMessage('First name is required'),
+    body('last_name').optional().notEmpty().withMessage('Last name is required'),
     body('email').isEmail().withMessage('Valid email is required'),
   ],
   updateMe
 );
-router.get('/profile', getProfile);
 
 export  {router as userRouter };
 

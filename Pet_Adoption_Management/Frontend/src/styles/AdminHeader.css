@@ -1,0 +1,58 @@
+.admin-header {
+  background: #fff;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: all 0.3s;
+}
+
+.admin-header-container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 4rem;
+}
+
+.admin-logo-container {
+  cursor: pointer;
+  margin-left: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-logo-text {
+  font-family: 'Jember Sketch Regular', cursive;
+  font-size: 3rem;
+  font-weight: bold;
+  background: black;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  border: none;
+  line-height: 1;
+}
+
+.admin-about-link {
+  font-size: 1.08rem;
+  font-weight: 700;
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  margin-right: 0.5rem;
+  transition: color 0.18s;
+}
+
+.admin-about-link:hover {
+  color: #E67C52;
+} 

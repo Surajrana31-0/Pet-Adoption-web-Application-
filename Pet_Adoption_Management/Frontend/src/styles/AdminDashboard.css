@@ -62,8 +62,8 @@
   color: #888;
   margin: 0 auto 0.5rem auto;
 }
-.admin-name {
-  font-weight: 700;
+.admin-username {
+  font-weight: 700 !important;
   color: var(--admin-primary-dark);
   font-size: 1.1rem;
 }

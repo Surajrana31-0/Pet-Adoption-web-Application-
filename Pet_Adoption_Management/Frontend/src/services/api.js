@@ -12,7 +12,20 @@ const api = axios.create({
 export const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
   if (imagePath.startsWith('http')) return imagePath;
-  return `${BASE_URL}/uploads/${imagePath}`;
+  // If imagePath already starts with 'uploads/', remove it
+  let cleanPath = imagePath;
+  if (cleanPath.startsWith('uploads/')) {
+    cleanPath = cleanPath.replace(/^uploads\//, '');
+  }
+  // If imagePath starts with a backslash (Windows), remove it
+  if (cleanPath.startsWith('uploads\\')) {
+    cleanPath = cleanPath.replace(/^uploads\\/, '');
+  }
+  // If imagePath contains any slashes, just use the last part (filename)
+  if (cleanPath.includes('/') || cleanPath.includes('\\')) {
+    cleanPath = cleanPath.split(/[/\\]/).pop();
+  }
+  return `${BASE_URL}/uploads/${cleanPath}`;
 };
 
 // Add a request interceptor to include the token

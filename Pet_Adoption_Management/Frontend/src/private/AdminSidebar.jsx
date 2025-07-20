@@ -1,5 +1,6 @@
 import React from "react";
 import { LogOut, Menu, X, Settings } from "lucide-react";
+import { getImageUrl } from "../services/api.js";
 import "../styles/AdminDashboard.css";
 
 const AdminSidebar = ({ open, setOpen, activeTab, setActiveTab, admin, onLogout, tabs }) => (
@@ -12,16 +13,18 @@ const AdminSidebar = ({ open, setOpen, activeTab, setActiveTab, admin, onLogout,
         <div className="admin-profile">
           {admin?.image_path ? (
             <img
-              src={admin.image_path}
+              src={getImageUrl(admin.image_path)}
               alt={admin?.username || "Profile"}
               className="profile-pic-circular"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
             />
-          ) : (
-            <div className="profile-pic-placeholder-circular">
-              {admin?.username ? admin.username.charAt(0).toUpperCase() : "A"}
-            </div>
-          )}
-          <div className="admin-name">Admin</div>
+          ) : null}
+          <div className="profile-pic-placeholder-circular" style={{ display: admin?.image_path ? 'none' : 'flex' }}>
+            {admin?.username ? admin.username.charAt(0).toUpperCase() : "A"}
+          </div>
           <div className="admin-username">{admin?.username || "admin"}</div>
         </div>
         <nav className="admin-nav">

@@ -1391,3 +1391,15 @@ body {
 .hero-background::after {
   background: var(--background);
 } 
+
+.edit-profile-btn {
+  background: var(--primary-accent, #E67C52) !important;
+  background-image: none !important;
+  color: var(--white) !important;
+  box-shadow: none !important;
+}
+.edit-profile-btn:hover {
+  background: #d65a3a !important;
+  background-image: none !important;
+  box-shadow: none !important;
+} 

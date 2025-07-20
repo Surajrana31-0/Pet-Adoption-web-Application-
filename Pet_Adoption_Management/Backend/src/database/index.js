@@ -21,13 +21,25 @@ export const sequelize = new Sequelize(
   }
 );
 
-export const db = () => {
+export const db = async () => {
   try {
-    sequelize.sync({alter:true})
-    console.log("Database is successfully connected")
+    console.log("Attempting to connect to database...");
+    console.log("DB Config:", {
+      host: process.env.DB_HOST,
+      database: process.env.DB_NAME,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD ? "***" : "NOT SET"
+    });
+    
+    await sequelize.authenticate();
+    console.log("Database authentication successful");
+    
+    await sequelize.sync({alter:true});
+    console.log("Database is successfully connected and synced");
 
   } catch (e) {
-    console.error("Database is not connected",e)
+    console.error("Database connection failed:", e);
+    throw e;
   }
 }
 

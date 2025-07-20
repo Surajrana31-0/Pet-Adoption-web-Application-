@@ -89,15 +89,59 @@ const getAll = async (req, res) => {
   try {
     const isAdmin = req.user.role === 'admin';
     const where = isAdmin ? {} : { user_id: req.user.id };
+    console.log('Fetching adoptions with where clause:', where);
+    
+    // First, let's try a simpler approach to debug the issue
     const adoptions = await Adoption.findAll({
       where,
       include: [
-        { model: User, attributes: ['id', 'username', 'email', 'first_name', 'last_name', 'image_path'] },
-        { model: Pet, attributes: ['id', 'name', 'breed', 'type', 'age', 'image_path'] }
+        { 
+          model: User, 
+          attributes: ['id', 'username', 'email', 'firstName', 'lastName', 'image_path'],
+          required: false // Use LEFT JOIN to ensure we get adoptions even if user data is missing
+        },
+        { 
+          model: Pet, 
+          attributes: ['id', 'name', 'breed', 'type', 'age', 'image_path'],
+          required: false
+        }
       ],
       order: [['created_at', 'DESC']]
     });
-    res.status(200).json({ data: adoptions });
+    
+    console.log('Found adoptions:', adoptions.length);
+    if (adoptions.length > 0) {
+      console.log('First adoption User data:', adoptions[0].User ? {
+        id: adoptions[0].User.id,
+        username: adoptions[0].User.username,
+        firstName: adoptions[0].User.firstName,
+        lastName: adoptions[0].User.lastName,
+        image_path: adoptions[0].User.image_path
+      } : 'No User data');
+      
+
+    }
+    
+    // If associations aren't working, manually fetch user data
+    const adoptionsWithUsers = await Promise.all(adoptions.map(async (adoption) => {
+      if (!adoption.User) {
+        console.log('No User data for adoption:', adoption.id, 'user_id:', adoption.user_id);
+        try {
+          const user = await User.findByPk(adoption.user_id, {
+            attributes: ['id', 'username', 'email', 'firstName', 'lastName', 'image_path']
+          });
+          if (user) {
+            adoption.User = user;
+            console.log('Manually fetched user data:', user.firstName, user.lastName);
+          }
+        } catch (userError) {
+          console.error('Error fetching user data:', userError);
+        }
+      }
+      return adoption;
+    }));
+    
+    res.status(200).json({ data: adoptionsWithUsers });
   } catch (e) {
     console.error('Error fetching adoptions:', e);
     res.status(500).json({ message: 'Failed to fetch adoptions' });

@@ -45,6 +45,61 @@
   border-radius: 50%;
 }
 
+.profile-pic-wrapper {
+  position: relative;
+}
+
+.edit-profile-button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.edit-profile-button:hover {
+  background: #0056b3;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.edit-profile-button span {
+  display: none;
+}
+
+.edit-profile-button:hover span {
+  display: inline;
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background: #333;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+}
+
+.edit-profile-button:hover span::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 8px;
+  border: 4px solid transparent;
+  border-top-color: #333;
+}
+
 .profile-details-section {
   flex: 1 1 300px;
   min-width: 220px;

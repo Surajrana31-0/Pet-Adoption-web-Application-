@@ -1,0 +1,117 @@
+.notification-page {
+  max-width: 600px;
+  margin: 3rem auto 2rem auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.notification-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.notification-header-row h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-accent, #E67C52);
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.notification-card {
+  background: #fafbfc;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  padding: 1.2rem 1.2rem 1.2rem 1.2rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.notification-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.notification-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--primary-accent, #E67C52);
+}
+
+.notification-email {
+  color: #666;
+  font-size: 0.98rem;
+}
+
+.notification-message {
+  color: #222;
+  font-size: 1.05rem;
+  margin: 0.2rem 0 0.2rem 0;
+}
+
+.notification-date {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+.notification-delete-btn {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+  margin-left: 1.2rem;
+}
+
+.notification-delete-btn:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.notification-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.notification-loading,
+.notification-error,
+.notification-empty {
+  text-align: center;
+  font-size: 1.08rem;
+  color: #888;
+  margin: 2rem 0;
+}
+
+.notification-error {
+  color: #ef4444;
+}
+
+@media (max-width: 700px) {
+  .notification-page {
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+    max-width: 98vw;
+  }
+  .notification-card {
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 1rem 0.7rem;
+  }
+} 

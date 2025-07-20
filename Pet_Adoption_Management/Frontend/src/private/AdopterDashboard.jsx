@@ -53,14 +53,22 @@ const AdopterDashboard = () => {
     });
   }, [user]);
 
-  // Handle tab parameter from URL
+  // Tab state from URL
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabParam = urlParams.get('tab');
     if (tabParam && ['applications', 'favorites', 'viewPets', 'profile', 'settings'].includes(tabParam)) {
       setActiveTab(tabParam);
+    } else {
+      setActiveTab('applications');
     }
   }, [location.search]);
+
+  // Tab change handler
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    navigate(`/dashboard?tab=${tab}`);
+  };
 
   // Fetch pets when 'View Pets' tab is active
   useEffect(() => {
@@ -383,7 +391,7 @@ const AdopterDashboard = () => {
                 </div>
               );
             })
-          )}
+          )}    
         </div>
       )}
     </div>
@@ -400,11 +408,20 @@ const AdopterDashboard = () => {
       <div className="tab-header-row">
         <h2>Settings</h2>
       </div>
-      <div className="settings-placeholder">
-        <p>Change password and notification preferences coming soon!</p>
-        <button className="btn-primary" style={{marginTop: '1.5rem'}} onClick={() => navigate('/profile')}>
-          Edit Profile
-        </button>
+      <div className="settings-container">
+        <div className="settings-card">
+          <div className="settings-icon">
+            <User size={48} />
+          </div>
+          <h3>Profile Management</h3>
+          <p>Update your personal information and profile picture</p>
+          <button 
+            className="btn-primary edit-profile-btn" 
+            onClick={() => navigate('/edit-profile')}
+          >
+            Edit Profile
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -446,7 +463,7 @@ const AdopterDashboard = () => {
             <button
               key={tab.key}
               className={`sidebar-link${activeTab === tab.key ? ' active' : ''}`}
-              onClick={() => setActiveTab(tab.key)}
+              onClick={() => handleTabChange(tab.key)}
             >
               {tab.icon}
               <span>{tab.label}</span>
