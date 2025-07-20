@@ -39,7 +39,7 @@ function App() {
   const location = useLocation();
 
   // Helper to determine if current route is private
-  const privateRoutes = ["/dashboard", "/admin", "/applications", "/profile"];
+  const privateRoutes = ["/dashboard", "/admin", "/applications", "/profile", "/notifications"];
   const isPrivateRoute = privateRoutes.some((route) => location.pathname.startsWith(route));
   const isAdminPrivateRoute = isAuthenticated && role === 'admin' && isPrivateRoute;
 
