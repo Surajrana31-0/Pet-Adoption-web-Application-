@@ -6,7 +6,7 @@ const About = () => {
   return (
     <div className="about-page container">
       <section className="about-hero">
-        <h1>🐾 Welcome to PawEy</h1>
+        <h1>🐾 Welcome to PetEy</h1>
         <p>
           Connecting loving humans with pets in need of a home. We make adoption simple,
           transparent, and compassionate.

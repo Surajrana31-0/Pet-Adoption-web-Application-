@@ -210,13 +210,13 @@ const Home = () => {
             {[
               {
                 name: 'Bhim Bahadur Rana',
-                text: 'Adopting Max was the best decision we ever made. The team at PawHaven made the process so smooth and supportive.',
+                text: 'Adopting OHO was the best decision we ever made. The team at PawHaven made the process so smooth and supportive.',
                 rating: 5,
                 image: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Bhim_Bahadur_Pande.jpg',
               },
               {
                 name: 'Samridhi Shrestha',
-                text: 'Luna has brought so much joy to our family. The adoption process was thorough but caring. Highly recommend!',
+                text: 'COCO has brought so much joy to our family. The adoption process was thorough but caring. Highly recommend!',
                 rating: 5,
                 image: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=150',
               },

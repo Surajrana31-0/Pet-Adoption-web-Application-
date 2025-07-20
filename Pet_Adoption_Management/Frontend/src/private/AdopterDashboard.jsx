@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Heart, Clock, CheckCircle, User, LogOut, Settings as SettingsIcon, Star, Edit2, PawPrint } from 'lucide-react'
+import { Heart, Clock, CheckCircle, LogOut, Settings as SettingsIcon, Star, Edit2, PawPrint } from 'lucide-react';
+import { User as UserIcon } from 'lucide-react';
 import { AuthContext } from '../AuthContext.jsx'
 import { useNavigate, useLocation } from 'react-router-dom'
 import '../styles/AdopterDashboard.css'
@@ -12,13 +13,13 @@ import DialogueBox from '../components/DialogueBox.jsx';
 const TABS = [
   { key: 'applications', label: 'My Applications', icon: <PawPrint size={18} /> },
   { key: 'favorites', label: 'My Favorites', icon: <Star size={18} /> },
-  { key: 'viewPets', label: 'View Pets', icon: <User size={18} /> },
+  { key: 'viewPets', label: 'View Pets', icon: <UserIcon size={18} /> },
   { key: 'profile', label: 'My Profile', icon: <Edit2 size={18} /> },
   { key: 'settings', label: 'Settings', icon: <SettingsIcon size={18} /> },
 ];
 
 const AdopterDashboard = () => {
-  const { user, token, role, isAuthenticated } = useContext(AuthContext)
+  const { user, token, role, isAuthenticated, logout } = useContext(AuthContext)
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
@@ -215,8 +216,9 @@ const AdopterDashboard = () => {
     setShowLogoutModal(true);
   };
   const confirmLogout = () => {
-    localStorage.removeItem('token');
+    logout();
     navigate('/login');
+    window.location.reload();
   };
 
   // Tab content renderers
@@ -411,7 +413,7 @@ const AdopterDashboard = () => {
       <div className="settings-container">
         <div className="settings-card">
           <div className="settings-icon">
-            <User size={48} />
+            <UserIcon size={48} />
           </div>
           <h3>Profile Management</h3>
           <p>Update your personal information and profile picture</p>
@@ -454,7 +456,8 @@ const AdopterDashboard = () => {
               />
             )}
           </div>
-          <div className="profile-details">
+          <div className="profile-details" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexDirection: 'row' }}>
+            <UserIcon size={20} color="#40916c" style={{ flexShrink: 0 }} />
             <span className="profile-name">{sidebarProfile.username}</span>
           </div>
         </div>

@@ -4,12 +4,14 @@ import { Heart, Menu, X, User } from 'lucide-react';
 import { AuthContext } from '../AuthContext.jsx';
 import { useAdminSessionProtection } from '../hooks/useAdminSessionProtection.js';
 import AdminSessionPopup from '../components/AdminSessionPopup.jsx';
+import LogoutDialog from '../components/LogoutDialog.jsx';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { role, isAuthenticated } = useContext(AuthContext);
+  const { role, isAuthenticated, logout } = useContext(AuthContext);
   const { 
     isAdmin, 
     isInAdminRoute, 
@@ -26,15 +28,29 @@ const Header = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Handle navigation with protection for admin users (only for homepage)
-  const handleNavigation = (to) => {
-    if (isAdmin && isInAdminRoute && to === '/') {
-      // Only protect navigation to homepage
-      navigateWithProtection(to);
+  // Adopter dashboard Home logic
+  const isAdopterDashboard = isAuthenticated && role === 'user' && location.pathname.startsWith('/dashboard');
+
+  // Logo/Home click handler for adopter dashboard
+  const handleHomeClick = (e) => {
+    if (e) e.preventDefault();
+    if (isAdopterDashboard) {
+      setShowLogoutDialog(true);
+    } else if (isAdmin && isInAdminRoute) {
+      navigateWithProtection('/');
     } else {
-      // For all other routes, use React Router navigation
-      navigate(to);
+      navigate('/');
     }
+  };
+
+  const handleLogoutConfirm = () => {
+    setShowLogoutDialog(false);
+    logout();
+    navigate('/');
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutDialog(false);
   };
 
   return (
@@ -42,16 +58,20 @@ const Header = () => {
       <div className="header-container">
         <div className="header-content flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="logo-container">
+          <span
+            className="logo-container"
+            style={{ cursor: 'pointer' }}
+            onClick={handleHomeClick}
+          >
             <span className="logo-text">
               PetEy
             </span>
-          </Link>
+          </span>
 
           {/* Desktop Navigation */}
           <nav className="nav-desktop space-x-8">
             <button
-              onClick={() => handleNavigation('/')}
+              onClick={handleHomeClick}
               className={`nav-link ${isActive('/') ? 'active' : ''}`}
               style={{ font: 'inherit', background: 'none', border: 'none', color: 'inherit', padding: 0, margin: 0, cursor: 'pointer' }}
             >
@@ -87,7 +107,7 @@ const Header = () => {
           {/* Desktop Auth Buttons */}
           <div className="auth-buttons space-x-4">
             <button
-              onClick={() => handleNavigation('/login')}
+              onClick={() => navigate('/login')}
               className="login-button"
               style={{ font: 'inherit', background: 'none', border: 'none', color: 'inherit', padding: 0, margin: 0, cursor: 'pointer' }}
             >
@@ -95,7 +115,7 @@ const Header = () => {
               <span>Login</span>
             </button>
             <button
-              onClick={() => handleNavigation('/signup')}
+              onClick={() => navigate('/signup')}
               className="signup-button"
             >
               <Heart className="h-4 w-4" />
@@ -117,7 +137,7 @@ const Header = () => {
           <div className="mobile-menu-links">
             <button
               onClick={() => {
-                handleNavigation('/');
+                handleHomeClick();
                 toggleMenu();
               }}
               className={`mobile-menu-link ${isActive('/') ? 'active' : ''}`}
@@ -149,7 +169,7 @@ const Header = () => {
             <div className="mobile-auth-buttons">
               <button
                 onClick={() => {
-                  handleNavigation('/login');
+                  navigate('/login');
                   toggleMenu();
                 }}
                 className="login-button"
@@ -160,7 +180,7 @@ const Header = () => {
               </button>
               <button
                 onClick={() => {
-                  handleNavigation('/signup');
+                  navigate('/signup');
                   toggleMenu();
                 }}
                 className="signup-button"
@@ -179,6 +199,12 @@ const Header = () => {
         onConfirm={handleConfirmNavigation}
         onCancel={handleCancelNavigation}
         targetRoute={pendingNavigation?.to}
+      />
+      {/* Logout Dialog for Adopter Dashboard */}
+      <LogoutDialog
+        open={showLogoutDialog}
+        onConfirm={handleLogoutConfirm}
+        onCancel={handleLogoutCancel}
       />
     </header>
   );

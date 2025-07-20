@@ -21,15 +21,30 @@ const Footer = () => {
               Connecting loving families with adorable pets. We believe every pet deserves a loving home and every family deserves the joy of a furry companion.
             </p>
             <div className="footer-social">
-              <a href="#" className="social-link">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="social-link">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="social-link">
-                <Instagram className="h-5 w-5" />
-              </a>
+              <a
+              href="https://www.facebook.com/"
+              className="social-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Facebook className="h-5 w-5" />
+            </a>
+            <a
+              href="https://www.twitter.com/"
+              className="social-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Twitter className="h-5 w-5" />
+            </a>
+            <a
+              href="https://www.instagram.com/"
+              className="social-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Instagram className="h-5 w-5" />
+            </a>
             </div>
           </div>
 
@@ -43,7 +58,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/adopt" className="footer-link">
+                <Link to="/login" className="footer-link">
                   Adopt a Pet
                 </Link>
               </li>
@@ -58,7 +73,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/volunteer" className="footer-link">
+                <Link to="/login" className="footer-link">
                   Volunteer
                 </Link>
               </li>
