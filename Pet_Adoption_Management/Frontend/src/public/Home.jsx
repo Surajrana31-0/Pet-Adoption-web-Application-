@@ -7,7 +7,7 @@ const Home = () => {
   const featuredPets = [
     {
       id: 1,
-      name: 'Buddy',
+      name: 'OHO',
       type: 'Dog',
       breed: 'Golden Retriever',
       age: '2 years',
@@ -16,7 +16,7 @@ const Home = () => {
     },
     {
       id: 2,
-      name: 'Luna',
+      name: 'COCO',
       type: 'Cat',
       breed: 'Persian',
       age: '1 year',
@@ -25,7 +25,7 @@ const Home = () => {
     },
     {
       id: 3,
-      name: 'Max',
+      name: 'MAX',
       type: 'Dog',
       breed: 'German Shepherd',
       age: '3 years',

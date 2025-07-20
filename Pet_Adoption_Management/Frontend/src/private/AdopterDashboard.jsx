@@ -6,6 +6,7 @@ import '../styles/AdopterDashboard.css'
 import api, { getImageUrl } from "../services/api";
 import { useToast } from '../components/ToastContext';
 import MyProfile from './MyProfile.jsx';
+import DialogueBox from '../components/DialogueBox.jsx';
 
 
 const TABS = [
@@ -35,6 +36,7 @@ const AdopterDashboard = () => {
   const [adoptError, setAdoptError] = useState("");
   const addToast = useToast();
   const [sidebarProfile, setSidebarProfile] = useState({ username: '', image_path: '' });
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     fetchApplications();
@@ -202,9 +204,12 @@ const AdopterDashboard = () => {
 
   // Logout handler
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    navigate('/')
-  }
+    setShowLogoutModal(true);
+  };
+  const confirmLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
   // Tab content renderers
   const renderApplications = () => (
@@ -460,7 +465,17 @@ const AdopterDashboard = () => {
         {activeTab === 'profile' && renderProfile()}
         {activeTab === 'settings' && renderSettings()}
       </main>
-
+      <DialogueBox
+        open={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        title="Confirm Logout"
+        message="Are you sure you want to logout?"
+        type="info"
+        actions={[
+          { label: 'Cancel', onClick: () => setShowLogoutModal(false), style: { background: '#e0e0e0', color: '#333' } },
+          { label: 'Logout', onClick: confirmLogout, style: { background: '#ff914d', color: '#fff' } },
+        ]}
+      />
     </div>
   )
 }

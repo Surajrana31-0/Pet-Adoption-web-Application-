@@ -46,4 +46,25 @@
   .modal-success { border-top: 4px solid #4caf50; }
   .modal-error { border-top: 4px solid #e53935; }
   .modal-info { border-top: 4px solid #2196f3; }
+  .modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.modal-action-btn {
+  background: #ff914d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 600;
+}
+.modal-action-btn:hover {
+  background: #ff6f00;
+  color: #fff;
+}
   

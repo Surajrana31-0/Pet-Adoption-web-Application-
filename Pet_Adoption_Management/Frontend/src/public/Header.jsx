@@ -57,12 +57,19 @@ const Header = () => {
             >
               Home
             </button>
-            <Link
-              to="/adopt"
+            <button
+              onClick={() => {
+                if (!isAuthenticated) {
+                  navigate('/login');
+                } else {
+                  navigate('/adopt');
+                }
+              }}
               className={`nav-link ${isActive('/adopt') ? 'active' : ''}`}
+              style={{ font: 'inherit', background: 'none', border: 'none', color: 'inherit', padding: 0, margin: 0, cursor: 'pointer' }}
             >
               Adopt
-            </Link>
+            </button>
             <Link
               to="/about"
               className={`nav-link ${isActive('/about') ? 'active' : ''}`}

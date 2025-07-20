@@ -9,6 +9,7 @@ import ManagePets from "./ManagePets";
 import ManageAdoptions from "./ManageAdoptions";
 import AdminSettings from "./AdminSettings";
 import "../styles/AdminDashboard.css";
+import DialogueBox from '../components/DialogueBox.jsx';
 
 const TABS = [
   { key: "overview", label: "Dashboard" },
@@ -25,6 +26,7 @@ const AdminDashboard = () => {
   const [admin, setAdmin] = useState(null);
   const [token, setToken] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -46,8 +48,11 @@ const AdminDashboard = () => {
   }, [navigate]);
 
   const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+  const confirmLogout = () => {
     logout();
-    navigate("/login");
+    navigate('/login');
   };
 
   return (
@@ -68,6 +73,17 @@ const AdminDashboard = () => {
         {activeTab === "adoptions" && <ManageAdoptions token={token} />}
         {activeTab === "settings" && <AdminSettings token={token} admin={admin} />}
       </main>
+      <DialogueBox
+        open={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        title="Confirm Logout"
+        message="Are you sure you want to logout?"
+        type="info"
+        actions={[
+          { label: 'Cancel', onClick: () => setShowLogoutModal(false), style: { background: '#e0e0e0', color: '#333' } },
+          { label: 'Logout', onClick: confirmLogout, style: { background: '#ff914d', color: '#fff' } },
+        ]}
+      />
     </div>
   );
 };

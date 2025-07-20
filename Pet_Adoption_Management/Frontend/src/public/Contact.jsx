@@ -84,6 +84,7 @@ const Contact = () => {
                 <input
                   type="text"
                   className={`form-input ${errors.firstName ? 'error' : ''}`}
+                  placeholder="First name"
                   {...register('firstName', { required: 'First name is required' })}
                 />
                 {errors.firstName && <span className="form-error">{errors.firstName.message}</span>}
@@ -93,6 +94,7 @@ const Contact = () => {
                 <input
                   type="text"
                   className={`form-input ${errors.lastName ? 'error' : ''}`}
+                  placeholder="Last name"
                   {...register('lastName', { required: 'Last name is required' })}
                 />
                 {errors.lastName && <span className="form-error">{errors.lastName.message}</span>}
@@ -103,6 +105,7 @@ const Contact = () => {
               <input
                 type="email"
                 className={`form-input ${errors.email ? 'error' : ''}`}
+                placeholder="Email address"
                 {...register('email', {
                   required: 'Email is required',
                   pattern: {
@@ -118,6 +121,7 @@ const Contact = () => {
               <input
                 type="tel"
                 className="form-input"
+                placeholder="Phone number (optional)"
                 {...register('phone')}
               />
             </div>

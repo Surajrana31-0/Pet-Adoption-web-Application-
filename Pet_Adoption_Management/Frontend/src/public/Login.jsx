@@ -112,10 +112,8 @@ const Login = () => {
               <label htmlFor="email" className="form-label">
                 Email Address
               </label>
-              <div className="input-group">
-                <div className="input-icon">
-                  <Mail className="h-5 w-5" />
-                </div>
+              <div className="input-group input-group-icon">
+                <Mail className="input-icon" />
                 <input
                   id="email"
                   name="email"
@@ -127,6 +125,7 @@ const Login = () => {
                   className="input-field"
                   placeholder="Enter your email"
                   disabled={loading}
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
               </div>
             </div>
@@ -136,10 +135,8 @@ const Login = () => {
               <label htmlFor="password" className="form-label">
                 Password
               </label>
-              <div className="input-group">
-                <div className="input-icon">
-                  <Lock className="h-5 w-5" />
-                </div>
+              <div className="input-group input-group-icon">
+                <Lock className="input-icon" />
                 <input
                   id="password"
                   name="password"
@@ -151,6 +148,7 @@ const Login = () => {
                   className="input-field"
                   placeholder="Enter your password"
                   disabled={loading}
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
                 <button
                   type="button"
@@ -158,6 +156,8 @@ const Login = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
                   disabled={loading}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  style={{ right: '0.75rem' }}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
