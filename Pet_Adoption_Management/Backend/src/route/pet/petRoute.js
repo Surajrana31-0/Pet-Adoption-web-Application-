@@ -1,6 +1,6 @@
 import express from 'express';
-import { petController } from '../../controller/pet/petController.js';
 import { requireAuth, requireAdmin } from '../../middleware/auth-middleware.js';
+import { petController } from '../../controller/pet/petController.js';
 import upload from '../../middleware/multerConfig.js';
 import { body } from 'express-validator';
 
@@ -38,4 +38,4 @@ router.put(
 );
 router.delete('/:id', requireAuth, requireAdmin, petController.deleteById);
 
-export { router as petRouter }; 
+export default router; 

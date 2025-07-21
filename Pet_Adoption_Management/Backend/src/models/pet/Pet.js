@@ -11,4 +11,6 @@ export const Pet = sequelize.define("Pet", {
   image_path: { type: DataTypes.STRING(255) },
   status: { type: DataTypes.STRING(50), allowNull: false, defaultValue: 'Available' },
   created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-}); 
+});
+
+export default Pet; 
