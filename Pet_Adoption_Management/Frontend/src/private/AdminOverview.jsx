@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "../styles/AdminDashboard.css";
+import { AuthContext } from "../AuthContext";
 
-const AdminOverview = ({ token }) => {
+const AdminOverview = () => {
+  const { token: contextToken } = useContext(AuthContext) || {};
+  const token = contextToken || localStorage.getItem("token") || "";
   const [stats, setStats] = useState({ users: 0, pets: 0, adoptions: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -11,7 +14,7 @@ const AdminOverview = ({ token }) => {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch("http://localhost:5000/api/admin/stats", {
+        const res = await fetch("/api/admin/stats", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch stats");

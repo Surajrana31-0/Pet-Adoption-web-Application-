@@ -1,71 +1,33 @@
-import SequelizeMock from 'sequelize-mock';
-import petController from '../controllers/petController';
+import { petController } from '../controller/pet/petController.js';
+import Pet from '../models/pet/Pet.js';
 
-// Mock Sequelize DB and Pet model INSIDE jest.mock
-jest.mock('../models', () => {
-  const DBConnectionMock = new SequelizeMock();
-  const mockPet = DBConnectionMock.define('Pet', {
-    id: 1,
-    name: 'Buddy',
-    type: 'Dog',
-    age: 2,
-    adopted: false,
-  });
-  return { Pet: mockPet };
-});
+jest.mock('../models/pet/Pet.js');
 
-import { Pet } from '../models'; // Import after jest.mock
-
-describe('petController', () => {
+describe('Pet Controller', () => {
   let req, res;
 
   beforeEach(() => {
-    req = {};
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      send: jest.fn(),
-    };
+    req = { body: { name: 'Buddy', type: 'Dog', age: 3 }, params: { id: 1 } };
+    res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
   });
 
-  it('should get all pets', async () => {
-    Pet.$queueResult([
-      Pet.build({ id: 1, name: 'Buddy', type: 'Dog', age: 2, adopted: false }),
-      Pet.build({ id: 2, name: 'Milo', type: 'Cat', age: 1, adopted: false }),
-    ]);
-    await petController.getAllPets(req, res);
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith([
-      expect.objectContaining({ name: 'Buddy' }),
-      expect.objectContaining({ name: 'Milo' }),
-    ]);
-  });
-
-  it('should create a new pet', async () => {
-    req.body = { name: 'Charlie', type: 'Dog', age: 3, adopted: false };
-    await petController.createPet(req, res);
+  it('should create a Pet', async () => {
+    Pet.create.mockResolvedValue(req.body);
+    await petController.create(req, res);
     expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ name: 'Charlie' }));
+    expect(res.json).toHaveBeenCalledWith({ data: req.body });
   });
 
-  it('should update a pet', async () => {
-  req.params = { id: 1 };
-  req.body = { name: 'Buddy Updated', age: 3 };
-  Pet.$queueResult([1]); // Sequelize update returns [number of affected rows]
-  await petController.updatePet(req, res);
-  expect(res.status).toHaveBeenCalledWith(200);
-  expect(res.json).toHaveBeenCalledWith(
-    expect.objectContaining({ message: 'Pet updated successfully' })
-  );
-});
+  it('should retrieve all Pets', async () => {
+    Pet.findAll.mockResolvedValue([req.body]);
+    await petController.getAll(req, res);
+    expect(res.json).toHaveBeenCalledWith({ data: [req.body] });
+  });
 
-it('should delete a pet', async () => {
-  req.params = { id: 1 };
-  Pet.$queueResult(1); // Sequelize destroy returns number of deleted rows
-  await petController.deletePet(req, res);
-  expect(res.status).toHaveBeenCalledWith(200);
-  expect(res.json).toHaveBeenCalledWith(
-    expect.objectContaining({ message: 'Pet deleted successfully' })
-  );
+  it('should handle non-existent Pet', async () => {
+    Pet.findByPk.mockResolvedValue(null);
+    await petController.getById(req, res);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: 'Pet not found' });
+  });
 }); 
-

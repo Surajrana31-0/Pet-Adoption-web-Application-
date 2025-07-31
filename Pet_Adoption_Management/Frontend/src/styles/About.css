@@ -1,50 +1,44 @@
 /* src/pages/About.css */
 
 .about-page {
-  padding: 3rem 2rem;
-  background: linear-gradient(to right, #fffaf0, #fefefe);
+  padding: 2.5rem 1.5rem;
+  background: #fff;
   color: #333;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.7;
-  max-width: 1200px;
+  max-width: 900px;
   margin: auto;
 }
 
 .about-hero {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   animation: fadeIn 1s ease-in;
 }
 
 .about-hero h1 {
-  font-size: 3rem;
+  font-size: 2.2rem;
   color: #ff7e5f;
   margin-bottom: 0.5rem;
 }
 
 .about-hero p {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #555;
 }
 
 .about-section {
-  background-color: #ffffff;
-  border-left: 5px solid #ff7e5f;
-  padding: 1.5rem 2rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.about-section:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  background-color: #fafbfc;
+  border-left: 4px solid #ff7e5f;
+  padding: 1.2rem 1.2rem;
+  border-radius: 10px;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .about-section h2 {
-  font-size: 1.8rem;
-  margin-bottom: 0.8rem;
+  font-size: 1.3rem;
+  margin-bottom: 0.7rem;
   color: #333;
 }
 
@@ -54,45 +48,26 @@
 }
 
 .about-section ul {
-  list-style: none;
-  padding-left: 0;
+  list-style: disc inside;
+  padding-left: 1.2rem;
 }
 
 .about-section ul li {
-  position: relative;
-  padding-left: 2rem;
-  margin-bottom: 0.8rem;
-  font-size: 1rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.98rem;
   color: #444;
 }
 
-.about-section ul li::before {
-  content: '🐾';
-  position: absolute;
-  left: 0;
-  top: 0;
-  font-size: 1.2rem;
-  color: #ff7e5f;
-}
-
-/* Responsive Design */
 @media screen and (max-width: 768px) {
   .about-hero h1 {
-    font-size: 2.2rem;
-  }
-
-  .about-hero p {
-    font-size: 1rem;
-  }
-
-  .about-section {
-    padding: 1.2rem 1.5rem;
-  }
-
-  .about-section h2 {
     font-size: 1.5rem;
   }
-
+  .about-section {
+    padding: 1rem 0.7rem;
+  }
+  .about-section h2 {
+    font-size: 1.1rem;
+  }
   .about-section ul li {
     font-size: 0.95rem;
   }
@@ -100,19 +75,13 @@
 
 @media screen and (max-width: 480px) {
   .about-page {
-    padding: 2rem 1rem;
+    padding: 1.2rem 0.5rem;
   }
-
-  .about-hero h1 {
-    font-size: 2rem;
-  }
-
   .about-section {
-    padding: 1rem;
+    padding: 0.7rem;
   }
 }
 
-/* Animation */
 @keyframes fadeIn {
   from {
     opacity: 0;

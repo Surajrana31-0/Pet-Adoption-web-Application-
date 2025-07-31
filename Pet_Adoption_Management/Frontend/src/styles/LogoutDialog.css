@@ -1,0 +1,78 @@
+.logout-dialog-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.logout-dialog-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.13);
+  padding: 2rem 2.5rem 1.5rem 2.5rem;
+  min-width: 320px;
+  max-width: 95vw;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logout-dialog-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #e67c52;
+  margin-bottom: 0.7rem;
+  text-align: center;
+}
+
+.logout-dialog-message {
+  color: #333;
+  font-size: 1.08rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.logout-dialog-actions {
+  display: flex;
+  gap: 1.2rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.logout-dialog-btn {
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.logout-dialog-btn.logout {
+  background: #ef4444;
+  color: #fff;
+}
+.logout-dialog-btn.logout:hover {
+  background: #b91c1c;
+}
+
+.logout-dialog-btn.cancel {
+  background: #f3f4f6;
+  color: #333;
+}
+.logout-dialog-btn.cancel:hover {
+  background: #e0e0e0;
+}
+
+@media (max-width: 600px) {
+  .logout-dialog-modal {
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+    min-width: unset;
+    width: 98vw;
+  }
+} 

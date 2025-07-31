@@ -20,3 +20,19 @@ Running script
 
 npm run dev  // for development
 npm start   
+
+
+# Navigate to backend directory
+cd Pet_Adoption_Management/Backend
+
+# Run all tests
+npm test
+
+# Run specific test files
+npm test -- adoptionController.test.js
+npm test -- favoriteController.test.js
+npm test -- authMiddleware.test.js
+npm test -- integration/adoptionFlow.test.js
+
+# Run with coverage
+npm test -- --coverage

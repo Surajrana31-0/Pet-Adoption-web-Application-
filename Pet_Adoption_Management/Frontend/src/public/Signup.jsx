@@ -104,10 +104,8 @@ const Signup = () => {
             {/* Username Field */}
             <div className="form-group">
               <label htmlFor="username" className="form-label">Username</label>
-              <div className="input-wrapper">
-                <div className="input-icon-wrapper">
-                  <User className="input-icon" />
-                </div>
+              <div className="input-wrapper input-group-icon">
+                <User className="input-icon" />
                 <input
                   id="username"
                   name="username"
@@ -117,6 +115,7 @@ const Signup = () => {
                   onChange={handleInputChange}
                   className="form-input"
                   placeholder="Choose a username"
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
               </div>
             </div>
@@ -126,10 +125,8 @@ const Signup = () => {
                 <label htmlFor="firstName" className="form-label">
                   First Name
                 </label>
-                <div className="input-wrapper">
-                  <div className="input-icon-wrapper">
-                    <User className="input-icon" />
-                  </div>
+                <div className="input-wrapper input-group-icon">
+                  <User className="input-icon" />
                   <input
                     id="firstName"
                     name="firstName"
@@ -139,6 +136,7 @@ const Signup = () => {
                     onChange={handleInputChange}
                     className="form-input"
                     placeholder="First name"
+                    style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                   />
                 </div>
               </div>
@@ -146,28 +144,29 @@ const Signup = () => {
                 <label htmlFor="lastName" className="form-label">
                   Last Name
                 </label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  required
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  placeholder="Last name"
-                />
+                <div className="input-wrapper input-group-icon">
+                  <User className="input-icon" />
+                  <input
+                    id="lastName"
+                    name="lastName"
+                    type="text"
+                    required
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="Last name"
+                    style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
+                  />
+                </div>
               </div>
             </div>
-
             {/* Email Field */}
             <div className="form-group">
               <label htmlFor="email" className="form-label">
                 Email Address
               </label>
-              <div className="input-wrapper">
-                <div className="input-icon-wrapper">
-                  <Mail className="input-icon" />
-                </div>
+              <div className="input-wrapper input-group-icon">
+                <Mail className="input-icon" />
                 <input
                   id="email"
                   name="email"
@@ -178,19 +177,17 @@ const Signup = () => {
                   onChange={handleInputChange}
                   className="form-input"
                   placeholder="Enter your email"
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
               </div>
             </div>
-
             {/* Phone Field */}
             <div className="form-group">
               <label htmlFor="phone" className="form-label">
                 Phone Number
               </label>
-              <div className="input-wrapper">
-                <div className="input-icon-wrapper">
-                  <Phone className="input-icon" />
-                </div>
+              <div className="input-wrapper input-group-icon">
+                <Phone className="input-icon" />
                 <input
                   id="phone"
                   name="phone"
@@ -200,17 +197,15 @@ const Signup = () => {
                   onChange={handleInputChange}
                   className="form-input"
                   placeholder="Enter your phone number"
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
               </div>
             </div>
-
             {/* Location Field */}
             <div className="form-group">
               <label htmlFor="location" className="form-label">Location</label>
-              <div className="input-wrapper">
-                <div className="input-icon-wrapper">
-                  <MapPin className="input-icon" />
-                </div>
+              <div className="input-wrapper input-group-icon">
+                <MapPin className="input-icon" />
                 <input
                   id="location"
                   name="location"
@@ -220,16 +215,15 @@ const Signup = () => {
                   onChange={handleInputChange}
                   className="form-input"
                   placeholder="City, State"
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
               </div>
             </div>
             {/* Address Field */}
             <div className="form-group">
               <label htmlFor="address" className="form-label">Address</label>
-              <div className="input-wrapper">
-                <div className="input-icon-wrapper">
-                  <MapPin className="input-icon" />
-                </div>
+              <div className="input-wrapper input-group-icon">
+                <MapPin className="input-icon" />
                 <input
                   id="address"
                   name="address"
@@ -239,19 +233,17 @@ const Signup = () => {
                   onChange={handleInputChange}
                   className="form-input"
                   placeholder="Street, City, State"
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
               </div>
             </div>
-
             {/* Password Field */}
             <div className="form-group">
               <label htmlFor="password" className="form-label">
                 Password
               </label>
-              <div className="input-wrapper">
-                <div className="input-icon-wrapper">
-                  <Lock className="input-icon" />
-                </div>
+              <div className="input-wrapper input-group-icon">
+                <Lock className="input-icon" />
                 <input
                   id="password"
                   name="password"
@@ -260,31 +252,27 @@ const Signup = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   className="form-input password-input"
-                  placeholder="Create a strong password"
+                  placeholder="Create a password"
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
                 <button
                   type="button"
                   className="password-toggle"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  style={{ right: '0.75rem' }}
                 >
-                  {showPassword ? (
-                    <EyeOff className="toggle-icon" />
-                  ) : (
-                    <Eye className="toggle-icon" />
-                  )}
+                  {showPassword ? <EyeOff className="toggle-icon" /> : <Eye className="toggle-icon" />}
                 </button>
               </div>
             </div>
-
             {/* Confirm Password Field */}
             <div className="form-group">
               <label htmlFor="confirmPassword" className="form-label">
                 Confirm Password
               </label>
-              <div className="input-wrapper">
-                <div className="input-icon-wrapper">
-                  <Lock className="input-icon" />
-                </div>
+              <div className="input-wrapper input-group-icon">
+                <Lock className="input-icon" />
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -294,17 +282,16 @@ const Signup = () => {
                   onChange={handleInputChange}
                   className="form-input password-input"
                   placeholder="Confirm your password"
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
                 <button
                   type="button"
                   className="password-toggle"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  style={{ right: '0.75rem' }}
                 >
-                  {showConfirmPassword ? (
-                    <EyeOff className="toggle-icon" />
-                  ) : (
-                    <Eye className="toggle-icon" />
-                  )}
+                  {showConfirmPassword ? <EyeOff className="toggle-icon" /> : <Eye className="toggle-icon" />}
                 </button>
               </div>
             </div>

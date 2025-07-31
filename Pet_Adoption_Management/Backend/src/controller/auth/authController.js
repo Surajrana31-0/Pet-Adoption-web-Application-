@@ -77,7 +77,7 @@ const requestPasswordReset = async (req, res) => {
             user.reset_token = hashedToken;
             user.reset_token_expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
             await user.save();
-            const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${encodeURIComponent(rawToken)}&username=${encodeURIComponent(username)}`;
+            const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/new-password?token=${encodeURIComponent(rawToken)}&username=${encodeURIComponent(username)}`;
             await sendResetEmail(user.email, resetLink, username);
         }
         // Always respond with generic message

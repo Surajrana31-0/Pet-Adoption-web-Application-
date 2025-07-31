@@ -1,15 +1,54 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "/api";
+const BASE_URL = "http://localhost:5000";
 
-export const getUsers = ()=> axios.get(`${API_URL}/users`);
-export const getPets = ()=> axios.get(`${API_URL}/pets`);
-export const getAdoptions = ()=> axios.get(`${API_URL}/adoptions`);
-export const updateUser = (userId, data) => axios.put(`${API_URL}/users/${userId}`, data);
-export const deleteUser = (userId) => axios.delete(`${API_URL}/users/${userId}`);
-export const addPet = (data) => axios.post(`${API_URL}/pets`, data);    
-export const updatePet = (petId, data) => axios.put(`${API_URL}/pets/${petId}`, data);
-export const deletePet = (petId) => axios.delete(`${API_URL}/pets/${petId}`);
+// Create an Axios instance
+const api = axios.create({
+  baseURL: API_URL,
+});
+
+// Utility function to get image URL
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith('http')) return imagePath;
+  // If imagePath already starts with 'uploads/', remove it
+  let cleanPath = imagePath;
+  if (cleanPath.startsWith('uploads/')) {
+    cleanPath = cleanPath.replace(/^uploads\//, '');
+  }
+  // If imagePath starts with a backslash (Windows), remove it
+  if (cleanPath.startsWith('uploads\\')) {
+    cleanPath = cleanPath.replace(/^uploads\\/, '');
+  }
+  // If imagePath contains any slashes, just use the last part (filename)
+  if (cleanPath.includes('/') || cleanPath.includes('\\')) {
+    cleanPath = cleanPath.split(/[/\\]/).pop();
+  }
+  return `${BASE_URL}/uploads/${cleanPath}`;
+};
+
+// Add a request interceptor to include the token
+api.interceptors.request.use(
+  (config) => {
+    // Skip authentication for public endpoints
+    const publicEndpoints = ['/pets', '/pets/'];
+    const isPublicEndpoint = publicEndpoints.some(endpoint => 
+      config.url.startsWith(endpoint) && config.method === 'get'
+    );
+    
+    if (!isPublicEndpoint) {
+      const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export default api;
 
 
 // export const fetchPets = async () => {

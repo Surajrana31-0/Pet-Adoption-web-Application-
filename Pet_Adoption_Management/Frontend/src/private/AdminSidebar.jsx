@@ -1,5 +1,6 @@
 import React from "react";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, X, Settings } from "lucide-react";
+import { getImageUrl } from "../services/api.js";
 import "../styles/AdminDashboard.css";
 
 const AdminSidebar = ({ open, setOpen, activeTab, setActiveTab, admin, onLogout, tabs }) => (
@@ -10,9 +11,21 @@ const AdminSidebar = ({ open, setOpen, activeTab, setActiveTab, admin, onLogout,
     {open && (
       <>
         <div className="admin-profile">
-          <div className="profile-pic-placeholder" />
-          <div className="admin-name">{admin?.name || "Admin"}</div>
-          <div className="admin-email">{admin?.email || "admin@example.com"}</div>
+          {admin?.image_path ? (
+            <img
+              src={getImageUrl(admin.image_path)}
+              alt={admin?.username || "Profile"}
+              className="profile-pic-circular"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+            />
+          ) : null}
+          <div className="profile-pic-placeholder-circular" style={{ display: admin?.image_path ? 'none' : 'flex' }}>
+            {admin?.username ? admin.username.charAt(0).toUpperCase() : "A"}
+          </div>
+          <div className="admin-username">{admin?.username || "admin"}</div>
         </div>
         <nav className="admin-nav">
           {tabs.map(tab => (
@@ -21,6 +34,7 @@ const AdminSidebar = ({ open, setOpen, activeTab, setActiveTab, admin, onLogout,
               className={`admin-nav-link${activeTab === tab.key ? " active" : ""}`}
               onClick={() => setActiveTab(tab.key)}
             >
+              {tab.key === 'settings' && <Settings size={18} style={{ marginRight: 6, verticalAlign: 'middle' }} />}
               {tab.label}
             </button>
           ))}

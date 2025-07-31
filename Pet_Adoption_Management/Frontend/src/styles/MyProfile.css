@@ -1,0 +1,215 @@
+.my-profile-root {
+  max-width: 900px;
+  margin: 2.5rem auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.profile-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 2rem;
+}
+
+.profile-pic-section {
+  flex: 0 0 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-pic-wrapper {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #e0e0e0;
+}
+
+.profile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile-pic-wrapper {
+  position: relative;
+}
+
+.edit-profile-button {
+  position: absolute;
+  bottom: 0;
+  right: 10;
+  background: #007bff;
+  color: white;
+  border: 2px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  
+}
+
+.edit-profile-button:hover {
+  background: #0056b3;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.edit-profile-button span {
+  display: none;
+}
+
+.edit-profile-button:hover span {
+  display: inline;
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background: #333;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+}
+
+.edit-profile-button:hover span::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 8px;
+  border: 4px solid transparent;
+  border-top-color: #333;
+}
+
+.profile-details-section {
+  flex: 1 1 300px;
+  min-width: 220px;
+}
+
+.profile-details-section h2 {
+  margin: 0 0 1rem 0;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.profile-detail-row {
+  margin-bottom: 0.5rem;
+  font-size: 1.08rem;
+  color: #333;
+}
+
+.profile-detail-row span {
+  font-weight: 500;
+  color: #666;
+  margin-right: 0.5em;
+}
+
+.adopted-pets-section {
+  margin-top: 1.5rem;
+}
+
+.adopted-pets-section h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+}
+
+.no-adopted-pets {
+  color: #888;
+  font-size: 1.08rem;
+  padding: 1.2rem 0;
+}
+
+.adopted-pets-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.adopted-pet-card {
+  background: #fafbfc;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  min-width: 220px;
+  max-width: 320px;
+  flex: 1 1 220px;
+}
+
+.adopted-pet-image {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f0f0f0;
+  border: 1px solid #e0e0e0;
+}
+
+.adopted-pet-info {
+  flex: 1;
+}
+
+.adopted-pet-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.2rem;
+}
+
+.adopted-pet-breed {
+  color: #666;
+  font-size: 0.98rem;
+  margin-bottom: 0.1rem;
+}
+
+.adopted-pet-age {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+.profile-loading, .profile-error {
+  text-align: center;
+  color: #b00020;
+  font-size: 1.1rem;
+  margin: 2rem 0;
+}
+
+@media (max-width: 700px) {
+  .my-profile-root {
+    padding: 1.2rem 0.5rem;
+  }
+  .profile-header {
+    flex-direction: column;
+    gap: 1.2rem;
+    align-items: flex-start;
+  }
+  .adopted-pets-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .adopted-pet-card {
+    min-width: 0;
+    max-width: 100%;
+  }
+} 

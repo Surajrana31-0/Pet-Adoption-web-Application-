@@ -1,89 +1,162 @@
-import React, { useEffect, useState } from "react";
-import "../styles/AdminDashboard.css";
+import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles/ManagePets.css';
 
-const mockPets = [
-  { id: 1, name: "Bella", breed: "Labrador", type: "Dog", age: "2 years", image: "" },
-  { id: 2, name: "Milo", breed: "Tabby", type: "Cat", age: "1 year", image: "" },
-];
+const API_URL = '/api/pets';
 
-const ManagePets = ({ token }) => {
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+export default function ManagePets() {
+  const navigate = useNavigate();
   const [pets, setPets] = useState([]);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState('');
+  const [actionLoading, setActionLoading] = useState(null);
+
+  const fetchPets = useCallback(async (searchTerm = '') => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch(`${API_URL}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Could not load pets');
+      let petsData = Array.isArray(data.data) ? data.data : [];
+      if (searchTerm) {
+        const term = searchTerm.toLowerCase();
+        petsData = petsData.filter(pet =>
+          (pet.name && pet.name.toLowerCase().includes(term)) ||
+          (pet.breed && pet.breed.toLowerCase().includes(term)) ||
+          (pet.type && pet.type.toLowerCase().includes(term))
+        );
+      }
+      setPets(petsData);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Debounced search
+  useEffect(() => {
+    const debounced = debounce(fetchPets, 400);
+    debounced(search);
+    // eslint-disable-next-line
+  }, [search]);
 
   useEffect(() => {
-    const fetchPets = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const res = await fetch("http://localhost:5000/api/admin/pets", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch pets");
-        const data = await res.json();
-        setPets(data);
-      } catch {
-        setPets(mockPets);
-        setError("Could not load pets. Showing mock data.");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchPets();
-  }, [token]);
+  }, [fetchPets]);
 
-  const handleAdd = () => {
-    setMessage("Pet added (mock action)");
-    setTimeout(() => setMessage(""), 2000);
-  };
-  const handleEdit = (id) => {
-    setMessage("Pet edited (mock action)");
-    setTimeout(() => setMessage(""), 2000);
-  };
-  const handleDelete = (id) => {
-    setPets(pets.filter(p => p.id !== id));
-    setMessage("Pet deleted (mock action)");
-    setTimeout(() => setMessage(""), 2000);
+  const handleDelete = async (pet) => {
+    if (!window.confirm(`Delete pet ${pet.name}?`)) return;
+    setActionLoading(pet.id);
+    try {
+      const res = await fetch(`${API_URL}/${pet.id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to delete pet');
+      setPets(pets.filter(p => p.id !== pet.id));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   return (
-    <div className="admin-pets">
-      <h2>Manage Pets</h2>
-      <button className="admin-action add" onClick={handleAdd}>Add Pet</button>
+    <div className="manage-pets-main">
+      <header className="manage-pets-header">
+        <h1>Manage Pets</h1>
+        <input
+          type="text"
+          placeholder="Search by name, breed, or type..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="search-input"
+        />
+        <button className="add-pet-btn" onClick={() => {
+          console.log('Add Pet button clicked, navigating to /add-pet');
+          navigate('/add-pet');
+        }}>Add Pet</button>
+      </header>
       {loading ? (
-        <div className="admin-loading">Loading pets...</div>
+        <div className="loading">Loading pets...</div>
+      ) : error ? (
+        <div className="form-error">{error}</div>
       ) : (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Breed</th>
-              <th>Type</th>
-              <th>Age</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pets.map(pet => (
-              <tr key={pet.id}>
-                <td>{pet.name}</td>
-                <td>{pet.breed}</td>
-                <td>{pet.type}</td>
-                <td>{pet.age}</td>
-                <td>
-                  <button className="admin-action edit" onClick={() => handleEdit(pet.id)}>Edit</button>
-                  <button className="admin-action delete" onClick={() => handleDelete(pet.id)}>Delete</button>
-                </td>
+        <div className="pets-table-wrapper">
+          <table className="pets-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Breed</th>
+                <th>Type</th>
+                <th>Age</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {pets.length === 0 ? (
+                <tr><td colSpan="7">No pets found.</td></tr>
+              ) : (
+                pets.map(pet => (
+                  <tr key={pet.id}>
+                    <td className="pet-img-cell">
+                      {pet.image_path ? (
+                        <img
+                          src={`http://localhost:5000/uploads/${pet.image_path}`}
+                          alt={pet.name}
+                          className="pet-img"
+                          onError={(e) => {
+                            console.log('Image failed to load:', pet.image_path);
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'inline-block';
+                          }}
+                        />
+                      ) : (
+                        <span className="pet-img pet-img-placeholder">?</span>
+                      )}
+                      <span className="pet-img pet-img-placeholder" style={{ display: 'none' }}>?</span>
+                    </td>
+                    <td>{pet.name}</td>
+                    <td>{pet.breed}</td>
+                    <td>{pet.type}</td>
+                    <td>{pet.age}</td>
+                    <td>{pet.status}</td>
+                    <td>
+                      <button
+                        className="delete-btn"
+                        disabled={actionLoading === pet.id}
+                        onClick={() => handleDelete(pet)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
-      {error && <div className="admin-error-message">{error}</div>}
-      {message && <div className="admin-success-message">{message}</div>}
     </div>
   );
-};
-
-export default ManagePets; 
+} 

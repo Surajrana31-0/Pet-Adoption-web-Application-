@@ -22,6 +22,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [redirecting, setRedirecting] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true); // default: checked
 
   // Auto-hide error after 4 seconds
   React.useEffect(() => {
@@ -44,10 +45,14 @@ const Login = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    if (name === "rememberMe") {
+      setRememberMe(checked);
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
   };
 
   const validateFields = () => {
@@ -70,7 +75,7 @@ const Login = () => {
     try {
       const data = await authAPI.login(formData.email, formData.password);
       if (data && data.data && data.data.access_token) {
-        login(data.data.access_token); // Context will update, useEffect will handle navigation
+        login(data.data.access_token, rememberMe); // Pass rememberMe!
       } else {
         setError("Invalid email or password");
       }
@@ -107,10 +112,8 @@ const Login = () => {
               <label htmlFor="email" className="form-label">
                 Email Address
               </label>
-              <div className="input-group">
-                <div className="input-icon">
-                  <Mail className="h-5 w-5" />
-                </div>
+              <div className="input-group input-group-icon">
+                <Mail className="input-icon" />
                 <input
                   id="email"
                   name="email"
@@ -122,6 +125,7 @@ const Login = () => {
                   className="input-field"
                   placeholder="Enter your email"
                   disabled={loading}
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
               </div>
             </div>
@@ -131,10 +135,8 @@ const Login = () => {
               <label htmlFor="password" className="form-label">
                 Password
               </label>
-              <div className="input-group">
-                <div className="input-icon">
-                  <Lock className="h-5 w-5" />
-                </div>
+              <div className="input-group input-group-icon">
+                <Lock className="input-icon" />
                 <input
                   id="password"
                   name="password"
@@ -146,6 +148,7 @@ const Login = () => {
                   className="input-field"
                   placeholder="Enter your password"
                   disabled={loading}
+                  style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 />
                 <button
                   type="button"
@@ -153,6 +156,8 @@ const Login = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
                   disabled={loading}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  style={{ right: '0.75rem' }}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -170,7 +175,7 @@ const Login = () => {
                   id="rememberMe"
                   name="rememberMe"
                   type="checkbox"
-                  checked={formData.rememberMe}
+                  checked={rememberMe}
                   onChange={handleInputChange}
                   className="checkbox-input"
                   disabled={loading}
@@ -212,9 +217,9 @@ const Login = () => {
         {/* Additional Info */}
         <p className="terms-text">
           By signing in, you agree to our{' '}
-          <Link to="/terms" className="terms-link">Terms of Service</Link>
+          <Link to="/login" className="terms-link">Terms of Service</Link>
           {' '}and{' '}
-          <Link to="/privacy" className="terms-link">Privacy Policy</Link>
+          <Link to="/login" className="terms-link">Privacy Policy</Link>
         </p>
       </div>
     </div>

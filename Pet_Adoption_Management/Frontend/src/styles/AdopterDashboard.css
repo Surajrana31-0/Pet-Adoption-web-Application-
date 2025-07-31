@@ -5,17 +5,25 @@
   --sidebar-hover: #f1f3f5;
   --primary: #40916c;
   --primary-dark: #2d6a4f;
+  --accent-color: #ff6b6b;
   --gray-900: #22223b;
   --gray-700: #4a4e69;
+  --gray-500: #6c757d;
+  --gray-300: #dee2e6;
   --gray-200: #e9ecef;
+  --gray-100: #f8f9fa;
   --white: #fff;
   --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --hover-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .adopter-dashboard-root {
   display: flex;
   min-height: 100vh;
   background: var(--gray-200);
+  overflow-x: hidden;
+  position: relative;
 }
 
 .dashboard-sidebar {
@@ -32,7 +40,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  margin-bottom: 2rem;
+  position: relative;
+  min-height: 90px;
 }
 .profile-pic-placeholder {
   width: 70px;
@@ -47,12 +57,23 @@
   margin-bottom: 0.5rem;
 }
 .profile-details {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .profile-name {
-  font-weight: 700;
-  color: var(--gray-900);
   font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  margin-top: 0;
+  margin-bottom: 0.2rem;
+  word-break: break-all;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  z-index: 2;
 }
 .profile-email {
   color: var(--gray-700);
@@ -79,10 +100,7 @@
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
-.sidebar-link:hover {
-  background: var(--sidebar-hover);
-  color: var(--primary-dark);
-}
+
 .sidebar-link.active {
   background: var(--sidebar-active);
   color: var(--primary);
@@ -92,10 +110,7 @@
   color: #e53935;
   margin-top: 1.5rem;
 }
-.sidebar-link.logout:hover {
-  background: #ffeaea;
-  color: #b71c1c;
-}
+
 
 .dashboard-main-content {
   flex: 1;
@@ -103,6 +118,9 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  background: var(--gray-200);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 .tab-content {
   background: var(--white);
@@ -110,12 +128,23 @@
   box-shadow: var(--shadow);
   padding: 2rem 2.5rem;
   min-height: 400px;
+  position: relative;
+  overflow: hidden;
 }
 .tab-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.tab-header-row h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin: 0;
 }
 .btn-primary {
   background: var(--primary);
@@ -128,9 +157,7 @@
   cursor: pointer;
   transition: background 0.18s;
 }
-.btn-primary:hover {
-  background: var(--primary-dark);
-}
+
 .btn-secondary {
   background: var(--gray-200);
   color: var(--gray-900);
@@ -147,6 +174,240 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
+}
+
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.favorite-card {
+  display: flex;
+  align-items: center;
+  background: #f2f4f7;
+  border-radius: 18px;
+  padding: 1.2rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  gap: 1.5rem;
+  position: relative;
+}
+
+.favorite-pet-image {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #e0e7ef;
+  border: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.favorite-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.favorite-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.favorite-info p {
+  margin: 0;
+  color: #555;
+  font-size: 1rem;
+}
+
+.pet-age {
+  color: #1976d2;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.remove-btn {
+  margin-left: auto;
+  background: #607d8b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6em 1.3em;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.remove-btn:hover {
+  background: #455a64;
+}
+
+.pets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.pet-card {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: visible;
+  border: 1px solid var(--gray-200);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 400px;
+  z-index: 1;
+}
+
+.pets-grid .pet-card .pet-image {
+  width: 100% !important;
+  height: 200px !important;
+  object-fit: cover !important;
+  background: var(--gray-200) !important;
+  display: block !important;
+}
+
+.pet-info {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  background: var(--white);
+  z-index: 2;
+  position: relative;
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.pet-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--primary-dark);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  display: block;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.pet-breed {
+  color: var(--gray-700);
+  font-size: 1rem;
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
+  display: block;
+  text-transform: capitalize;
+}
+
+.pet-age {
+  color: var(--gray-700);
+  font-size: 0.9rem;
+  margin: 0 0 1.5rem 0;
+  font-weight: 500;
+  background: var(--gray-100);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  width: fit-content;
+  display: block;
+}
+
+/* Removed duplicate conflicting rules */
+
+.pet-card-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray-100);
+}
+
+.pet-card-actions button {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pet-card-actions .btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.pet-card-actions .btn-secondary {
+  background: var(--gray-200);
+  color: var(--gray-900);
+  border: 1px solid var(--gray-300);
+}
+
+.pet-card-actions .btn-secondary.favorited {
+  background: #ff6b6b;
+  color: white;
+  border-color: #ff6b6b;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.pet-search-input {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  width: 300px;
+  background: var(--white);
+  transition: border-color 0.2s ease;
+}
+
+.pet-search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(64, 145, 108, 0.1);
+}
+
+.pet-search-input::placeholder {
+  color: var(--gray-500);
+}
+
+.no-pets {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--gray-700);
+}
+
+.no-pets .empty-icon {
+  width: 4rem;
+  height: 4rem;
+  color: var(--gray-200);
+  margin-bottom: 1rem;
+}
+
+.no-pets h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--gray-900);
+  font-size: 1.2rem;
+}
+
+.no-pets p {
+  margin: 0;
+  font-size: 0.95rem;
 }
 .application-card, .favorite-card {
   background: var(--gray-200);
@@ -245,11 +506,118 @@
   border: 1px solid #ccc;
   font-size: 1rem;
 }
-.settings-placeholder {
+/* Settings Section */
+.settings-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 2rem;
+}
+
+.settings-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 3rem;
   text-align: center;
-  color: #888;
-  margin-top: 2rem;
-  font-size: 1.1rem;
+  max-width: 400px;
+  width: 100%;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.settings-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: #007bff;
+}
+
+.settings-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.settings-card p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+.edit-profile-btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.edit-profile-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+}
+
+.edit-profile-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Settings */
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 1rem;
+  }
+  
+  .settings-card {
+    padding: 2rem;
+    margin: 1rem;
+  }
+  
+  .settings-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  .settings-card p {
+    font-size: 0.9rem;
+  }
+  
+  .edit-profile-btn {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-card {
+    padding: 1.5rem;
+  }
+  
+  .settings-icon {
+    margin-bottom: 1rem;
+  }
+  
+  .settings-card h3 {
+    font-size: 1.2rem;
+  }
+  
+  .edit-profile-btn {
+    width: 100%;
+    padding: 1rem;
+  }
 }
 /* Modal styles */
 .browse-pets-modal {
@@ -316,6 +684,38 @@
   color: #888;
   margin: 2rem 0;
 }
+.favorite-search-container {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.favorite-search-input {
+  width: 260px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  padding: 0 1rem;
+  background: #fff;
+  transition: border 0.2s;
+}
+.favorite-search-input:focus {
+  border: 1.5px solid #1976d2;
+  outline: none;
+}
+
+@media (max-width: 600px) {
+  .favorite-search-input {
+    width: 100%;
+    margin-top: 0.7rem;
+  }
+  .favorite-search-container {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0.7rem;
+  }
+}
 @media (max-width: 900px) {
   .adopter-dashboard-root {
     flex-direction: column;
@@ -329,6 +729,18 @@
   }
   .dashboard-main-content {
     padding: 1.2rem 2vw;
+  }
+  .pets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .pet-search-input {
+    width: 280px;
+  }
+  .tab-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
 }
 @media (max-width: 600px) {
@@ -344,4 +756,74 @@
   .tab-content {
     padding: 1rem 0.5rem;
   }
+  .favorite-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 1rem;
+  }
+  .remove-btn {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 0.7rem;
+  }
+} 
+
+.adopt-error-message {
+  color: #b00020;
+  background: #ffeaea;
+  border-radius: 6px;
+  padding: 0.7em 1.2em;
+  margin: 1em 0 0.5em 0;
+  font-size: 1.05em;
+  font-weight: 500;
+  text-align: center;
+}
+
+.pet-unavailable-msg {
+  display: block;
+  color: #b00020;
+  font-size: 0.98em;
+  margin-top: 0.5em;
+  font-weight: 500;
+} 
+
+.sidebar-profile-pic {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+  background: #f5f5f5;
+  display: block;
+  margin-bottom: 0.5rem;
+  z-index: 1;
+} 
+
+/* Duplicate rule removed - using original .pet-image rule */ 
+
+/* Force pet images to display in AdopterDashboard */
+.adopter-dashboard-root .pets-grid .pet-card .pet-image {
+  width: 100% !important;
+  height: 200px !important;
+  object-fit: cover !important;
+  background: var(--gray-200) !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  min-height: 200px !important;
+  min-width: 100% !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Additional rule to ensure images are never hidden */
+.adopter-dashboard-root .pets-grid .pet-card img.pet-image {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  clip: auto !important;
+  clip-path: none !important;
+  transform: none !important;
+  filter: none !important;
 } 

@@ -7,7 +7,7 @@ const Home = () => {
   const featuredPets = [
     {
       id: 1,
-      name: 'Buddy',
+      name: 'OHO',
       type: 'Dog',
       breed: 'Golden Retriever',
       age: '2 years',
@@ -16,7 +16,7 @@ const Home = () => {
     },
     {
       id: 2,
-      name: 'Luna',
+      name: 'COCO',
       type: 'Cat',
       breed: 'Persian',
       age: '1 year',
@@ -25,18 +25,27 @@ const Home = () => {
     },
     {
       id: 3,
-      name: 'Max',
+      name: 'MAX',
       type: 'Dog',
       breed: 'German Shepherd',
       age: '3 years',
       image: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=400',
       description: 'Loyal and protective, great with kids and families.',
     },
+    {
+      id: 4,
+      name: 'SUSI',
+      type: 'Cat',
+      breed: 'Siamese',
+      age: '4 months',
+      image: 'https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&w=400',
+      description: 'Playful kitten, loves cuddles and chasing .',
+    },
   ];
 
   const stats = [
-    { number: '5,00+', label: 'Happy Adoptions', icon: Heart },
-    { number: '1,20+', label: 'Active Volunteers', icon: Users },
+    { number: '50+', label: 'Happy Adoptions', icon: Heart },
+    { number: '120+', label: 'Active Volunteers', icon: Users },
     { number: '50+', label: 'Partner Shelters', icon: HomeIcon },
     { number: '5+', label: 'Years Experience', icon: Award },
   ];
@@ -210,13 +219,13 @@ const Home = () => {
             {[
               {
                 name: 'Bhim Bahadur Rana',
-                text: 'Adopting Max was the best decision we ever made. The team at PawHaven made the process so smooth and supportive.',
+                text: 'Adopting OHO was the best decision we ever made. The team at PawHaven made the process so smooth and supportive.',
                 rating: 5,
                 image: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Bhim_Bahadur_Pande.jpg',
               },
               {
                 name: 'Samridhi Shrestha',
-                text: 'Luna has brought so much joy to our family. The adoption process was thorough but caring. Highly recommend!',
+                text: 'COCO has brought so much joy to our family. The adoption process was thorough but caring. Highly recommend!',
                 rating: 5,
                 image: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=150',
               },

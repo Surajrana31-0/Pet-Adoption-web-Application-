@@ -1,0 +1,232 @@
+.admin-settings.unified {
+  max-width: 600px; /* Increased max-width for a wider card */
+  margin: 3rem auto;
+  background: var(--white);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  padding: 2.5rem 2rem 2rem 2rem;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.settings-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.profile-image-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid var(--primary-accent, #E67C52);
+  background: #f3f4f6;
+  margin-bottom: 0.5rem;
+}
+
+.profile-details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 1.08rem;
+  align-items: flex-start;
+}
+
+.profile-details .username-row {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary-accent, #E67C52);
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.01em;
+}
+
+.profile-details div {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.profile-details strong {
+  min-width: 110px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.profile-details .muted {
+  color: #888;
+  font-style: italic;
+}
+
+.admin-settings-buttons {
+  display: flex;
+  justify-content: center; /* Center the buttons */
+  gap: 1.5rem; /* Space between buttons */
+  margin-top: 1.7rem; /* Keep existing margin-top from first button */
+  width: 100%; /* Ensure the container takes full width */
+}
+
+.edit-profile-btn {
+  padding: 0.8rem 2.2rem;
+  background: var(--primary-accent, #865a48);
+  color: var(--white);
+  border: none;
+  border-radius: 5px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  
+  background-image: none;
+  transition: background 0.18s;
+  flex-grow: 1; /* Allow buttons to grow and fill space */
+  max-width: 48%; /* Limit button width to prevent overflow on smaller screens */
+}
+
+.edit-profile-btn:hover {
+  background: #d65a3a;
+  box-shadow: none;
+}
+
+/* Restore original modal styles and media queries */
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  min-width: 320px;
+  max-width: 95vw;
+  width: 400px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.13);
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  color: #888;
+  cursor: pointer;
+}
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.profile-image-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.image-actions {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 0.3rem;
+}
+.upload-btn, .delete-btn {
+  background: var(--primary, #3b82f6);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.delete-btn {
+  background: #ef4444;
+}
+.upload-btn:hover {
+  background: #2563eb;
+}
+.delete-btn:hover {
+  background: #b91c1c;
+}
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.form-fields input {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  font-size: 1rem;
+  background: #f9fafb;
+  outline: none;
+  transition: border 0.2s;
+}
+.form-fields input:focus {
+  border: 1.5px solid var(--primary, #3b82f6);
+}
+.save-btn {
+  background: var(--primary, #3b82f6);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
+  font-size: 1.05rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+}
+.error-message {
+  color: #ef4444;
+  background: #fef2f2;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.98rem;
+}
+.success-message {
+  color: #16a34a;
+  background: #f0fdf4;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.98rem;
+}
+
+@media (max-width: 600px) {
+  .admin-settings.unified {
+    padding: 1.2rem 0.5rem 2rem 0.5rem;
+    max-width: 98vw;
+  }
+  .settings-profile {
+    gap: 0.7rem;
+  }
+  .profile-image-large {
+    width: 80px;
+    height: 80px;
+  }
+  .profile-details strong {
+    min-width: 90px;
+  }
+  .edit-profile-btn {
+    width: 100%;
+    padding: 0.8rem 0;
+  }
+  .modal-content {
+    width: 98vw;
+    min-width: unset;
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+  }
+} 

@@ -6,11 +6,9 @@ const router = express.Router();
 
 router.use(requireAuth);
 
-router.get('/user', adoptionController.getAllForUser);
-router.get('/', requireAdmin, adoptionController.getAll);
 router.post('/', adoptionController.create);
-router.get('/:id', adoptionController.getById);
-router.put('/:id', adoptionController.update);
-router.delete('/:id', adoptionController.deleteById);
+router.get('/', adoptionController.getAll);
+router.put('/:id/approve', requireAdmin, adoptionController.approve);
+router.put('/:id/reject', requireAdmin, adoptionController.reject);
 
 export { router as adoptionRouter }; 
