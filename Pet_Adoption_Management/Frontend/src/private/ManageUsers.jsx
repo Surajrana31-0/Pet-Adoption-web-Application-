@@ -125,7 +125,7 @@ export default function ManageUsers() {
                       <span className="user-img-wrapper">
                         {user.image_path ? (
                           <img
-                            src={`http://localhost:5000/${user.image_path.replace(/\\/g, '/')}`}
+                            src={`http://localhost:5000/uploads/${user.image_path}`}
                             alt={user.username || user.email}
                             className="user-img"
                           />

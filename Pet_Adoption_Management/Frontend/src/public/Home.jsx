@@ -32,11 +32,20 @@ const Home = () => {
       image: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=400',
       description: 'Loyal and protective, great with kids and families.',
     },
+    {
+      id: 4,
+      name: 'SUSI',
+      type: 'Cat',
+      breed: 'Siamese',
+      age: '4 months',
+      image: 'https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&w=400',
+      description: 'Playful kitten, loves cuddles and chasing .',
+    },
   ];
 
   const stats = [
-    { number: '5,00+', label: 'Happy Adoptions', icon: Heart },
-    { number: '1,20+', label: 'Active Volunteers', icon: Users },
+    { number: '50+', label: 'Happy Adoptions', icon: Heart },
+    { number: '120+', label: 'Active Volunteers', icon: Users },
     { number: '50+', label: 'Partner Shelters', icon: HomeIcon },
     { number: '5+', label: 'Years Experience', icon: Award },
   ];

@@ -217,9 +217,9 @@ const Login = () => {
         {/* Additional Info */}
         <p className="terms-text">
           By signing in, you agree to our{' '}
-          <Link to="/terms" className="terms-link">Terms of Service</Link>
+          <Link to="/login" className="terms-link">Terms of Service</Link>
           {' '}and{' '}
-          <Link to="/privacy" className="terms-link">Privacy Policy</Link>
+          <Link to="/login" className="terms-link">Privacy Policy</Link>
         </p>
       </div>
     </div>

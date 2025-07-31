@@ -14,9 +14,7 @@ import AdopterDashboard from "./private/AdopterDashboard.jsx";
 import AdminRouteGuard from "./components/AdminRouteGuard.jsx";
 import ResetPassword from "./public/ResetPassword.jsx";
 import NewPassword from "./public/NewPassword.jsx";
-import NavigationBar from "./components/admin/NavigationBar.jsx";
 import Profile from "./private/Profile.jsx";
-import ProfileEdit from "./private/ProfileEdit.jsx";
 import ManagePets from './private/ManagePets';
 import AddPet from './components/admin/AddPet';
 import PetDescription from './private/PetDescription.jsx';
@@ -54,7 +52,7 @@ function App() {
 
   return (
     <ToastProvider>
-      {isAdminPrivateRoute ? <AdminHeader /> : isAuthenticated && isPrivateRoute ? <EmptyHeader /> : <Header />}
+      {location.pathname === '/about' && isAuthenticated && role === 'admin' ? <EmptyHeader /> : isAdminPrivateRoute ? <AdminHeader /> : isAuthenticated && isPrivateRoute ? <EmptyHeader /> : <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -83,7 +81,7 @@ function App() {
         {/* Add private routes for applications and profile if needed */}
         <Route path="/applications" element={<ProtectedRoute requiredRole="user"><div>My Applications Page</div></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute requiredRole="user"><Profile /></ProtectedRoute>} />
-        <Route path="/profile/edit" element={<ProtectedRoute requiredRole="user"><ProfileEdit /></ProtectedRoute>} />
+        <Route path="/profile/edit" element={<ProtectedRoute requiredRole="user"><EditAdopterProfile /></ProtectedRoute>} />
         <Route path="/edit-profile" element={<ProtectedRoute requiredRole="user"><EditAdopterProfile /></ProtectedRoute>} />
         <Route path="/pet/:id" element={<ProtectedRoute requiredRole="user"><PetDescription /></ProtectedRoute>} />
         <Route path="/adopt/:id" element={<ProtectedRoute requiredRole="user"><AdoptMe /></ProtectedRoute>} />

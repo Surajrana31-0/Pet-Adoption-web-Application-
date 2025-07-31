@@ -1,5 +1,5 @@
 .admin-settings.unified {
-  max-width: 420px;
+  max-width: 600px; /* Increased max-width for a wider card */
   margin: 3rem auto;
   background: var(--white);
   border-radius: 18px;
@@ -10,6 +10,7 @@
   flex-direction: column;
   align-items: center;
 }
+
 .settings-profile {
   display: flex;
   flex-direction: column;
@@ -18,6 +19,7 @@
   margin-bottom: 2rem;
   width: 100%;
 }
+
 .profile-image-large {
   width: 100px;
   height: 100px;
@@ -27,6 +29,7 @@
   background: #f3f4f6;
   margin-bottom: 0.5rem;
 }
+
 .profile-details {
   width: 100%;
   display: flex;
@@ -35,6 +38,7 @@
   font-size: 1.08rem;
   align-items: flex-start;
 }
+
 .profile-details .username-row {
   font-size: 1.15rem;
   font-weight: 700;
@@ -42,41 +46,55 @@
   margin-bottom: 0.2rem;
   letter-spacing: 0.01em;
 }
+
 .profile-details div {
   width: 100%;
   display: flex;
   align-items: baseline;
   gap: 0.4rem;
 }
+
 .profile-details strong {
   min-width: 110px;
   font-weight: 600;
   color: var(--text);
 }
+
 .profile-details .muted {
   color: #888;
   font-style: italic;
 }
+
+.admin-settings-buttons {
+  display: flex;
+  justify-content: center; /* Center the buttons */
+  gap: 1.5rem; /* Space between buttons */
+  margin-top: 1.7rem; /* Keep existing margin-top from first button */
+  width: 100%; /* Ensure the container takes full width */
+}
+
 .edit-profile-btn {
-  margin-top: 1.7rem;
   padding: 0.8rem 2.2rem;
-  background: var(--primary-accent, #E67C52);
+  background: var(--primary-accent, #865a48);
   color: var(--white);
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 1.08rem;
   font-weight: 600;
   cursor: pointer;
-  /* Remove box-shadow and gradient */
-  box-shadow: none;
+  
   background-image: none;
   transition: background 0.18s;
+  flex-grow: 1; /* Allow buttons to grow and fill space */
+  max-width: 48%; /* Limit button width to prevent overflow on smaller screens */
 }
+
 .edit-profile-btn:hover {
   background: #d65a3a;
   box-shadow: none;
 }
 
+/* Restore original modal styles and media queries */
 /* Modal Styles */
 .modal-overlay {
   position: fixed;

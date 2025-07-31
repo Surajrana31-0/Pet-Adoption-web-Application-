@@ -68,12 +68,14 @@ const AdminSettings = () => {
           <div><strong>Address:</strong> {admin.address || <span className="muted">Not set</span>}</div>
         </div>
       </div>
-      <button className="edit-profile-btn" onClick={() => setEditOpen(true)}>
-        Edit Profile
-      </button>
-      <button className="edit-profile-btn" style={{ marginTop: '0.7rem', background: '#40916c' }} onClick={() => navigate('/notifications')}>
-        View Notification
-      </button>
+      <div className="admin-settings-buttons">
+        <button className="edit-profile-btn" onClick={() => setEditOpen(true)}>
+          Edit Profile
+        </button>
+        <button className="edit-profile-btn" style={{ marginTop: '0.7rem', background: '#40916c' }} onClick={() => navigate('/notifications')}>
+          View Notification
+        </button>
+      </div>
       {editOpen && (
         <EditProfile
           isOpen={editOpen}

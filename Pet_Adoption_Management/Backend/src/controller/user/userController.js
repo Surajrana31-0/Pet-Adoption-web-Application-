@@ -60,10 +60,10 @@ const update = async (req, res) => {
         // Handle image upload
         if (req.file) {
             // Delete old image if exists
-            if (oldUser.image_path && fs.existsSync(oldUser.image_path)) {
-                fs.unlinkSync(oldUser.image_path);
+            if (oldUser.image_path && fs.existsSync(path.join('uploads', oldUser.image_path))) {
+                fs.unlinkSync(path.join('uploads', oldUser.image_path));
             }
-            oldUser.image_path = req.file.path;
+            oldUser.image_path = req.file.filename;
         }
         await oldUser.save();
         res.status(200).send({ data: oldUser, message: "user updated successfully" })
@@ -84,8 +84,8 @@ const deleteById = async (req, res) => {
             return res.status(404).send({ message: "User not found" });
         }
         // Delete image file if exists
-        if (oldUser.image_path && fs.existsSync(oldUser.image_path)) {
-            fs.unlinkSync(oldUser.image_path);
+        if (oldUser.image_path && fs.existsSync(path.join('uploads', oldUser.image_path))) {
+            fs.unlinkSync(path.join('uploads', oldUser.image_path));
         }
         await oldUser.destroy();
         res.status(200).send({ message: "user deleted successfully" })

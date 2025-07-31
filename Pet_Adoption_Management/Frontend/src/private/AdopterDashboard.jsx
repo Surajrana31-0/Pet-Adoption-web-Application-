@@ -344,13 +344,19 @@ const AdopterDashboard = () => {
           ) : (
             filteredPets.map(pet => {
               const unavailable = ["Adopted", "Pending"].includes(pet.status);
+              const imageUrl = getImageUrl(pet.image_path);
+              console.log(`Pet: ${pet.name}, Image Path: ${pet.image_path}, Generated URL: ${imageUrl}`);
               return (
                 <div key={pet.id} className="pet-card">
                   <img 
-                    src={getImageUrl(pet.image_path)}
+                    src={imageUrl}
                     alt={pet.name}
                     className="pet-image" 
-                    onError={e => { e.target.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'; }}
+                    onError={e => { 
+                      console.log(`Image failed to load for ${pet.name}:`, e.target.src);
+                      e.target.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=300'; 
+                    }}
+                    onLoad={() => console.log(`Image loaded successfully for ${pet.name}`)}
                   />
                   <div className="pet-info">
                     <h3>{pet.name}</h3>
