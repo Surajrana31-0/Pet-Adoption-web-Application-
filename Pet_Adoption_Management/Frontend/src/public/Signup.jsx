@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, Phone, Heart, PawPrint, MapPin } from 'lucide-react';
 import {useForm} from 'react-hook-form';
+import { authAPI } from '../utils/api';
 import '../styles/Signup.css';
 import PopupBox from "../components/PopupBox";
 
@@ -43,39 +44,31 @@ const Signup = () => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone,
-          location: formData.location,
-          address: formData.address,
-          agreeToTerms: formData.agreeToTerms
-        })
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setMessage('Signup successful! Redirecting to login...');
-        setMessageType('success');
-        setTimeout(() => {
-          navigate('/login');
-        }, 1500);
-      } else {
-        if (data.message === "User already exists") {
-          setPopupMsg("User already exists");
-          setPopupOpen(true);
-          return;
-        }
-        setMessage(data.message || 'Signup failed');
-        setMessageType('error');
-      }
+      const userData = {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        location: formData.location,
+        address: formData.address,
+        agreeToTerms: formData.agreeToTerms
+      };
+      
+      const data = await authAPI.signup(userData);
+      setMessage('Signup successful! Redirecting to login...');
+      setMessageType('success');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
     } catch (err) {
-      setMessage('Network error');
+      if (err.message === "User already exists") {
+        setPopupMsg("User already exists");
+        setPopupOpen(true);
+        return;
+      }
+      setMessage(err.message || 'Network error');
       setMessageType('error');
     }
   };
